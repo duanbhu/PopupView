@@ -10,9 +10,6 @@ let package = Package(
         .library(
             name: "PopupView",
             targets: ["PopupView"]),
-        .library(
-            name: "PickerView",
-            targets: ["PickerView"]),
     ],
     dependencies: [
         .package(url: "https://github.com/SwiftKickMobile/SwiftMessages.git", .upToNextMajor(from: "10.0.0"))
@@ -23,9 +20,6 @@ let package = Package(
             dependencies: [
                 .product(name: "SwiftMessages", package: "SwiftMessages")
             ]),
-        .target(
-            name: "PickerView",
-            dependencies: []),
         .testTarget(
             name: "PopupViewTests",
             dependencies: ["PopupView"]
