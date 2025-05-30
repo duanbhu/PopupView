@@ -1,13 +1,11 @@
 use_frameworks!
 
-platform :ios, '10.0'
+platform :ios, '13.0'
 
 target 'PopupView_Example' do
   pod 'PopupView', :path => '../'
 
   target 'PopupView_Tests' do
     inherit! :search_paths
-
-    pod 'FBSnapshotTestCase' , '~> 2.1.4'
   end
 end

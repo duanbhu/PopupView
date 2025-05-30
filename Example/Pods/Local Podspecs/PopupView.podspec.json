@@ -1,0 +1,28 @@
+{
+  "name": "PopupView",
+  "version": "0.1.0",
+  "summary": "A short description of PopupView.",
+  "description": "TODO: Add long description of the pod here.",
+  "homepage": "https://github.com/duanbhu/PopupView",
+  "license": {
+    "type": "MIT",
+    "file": "LICENSE"
+  },
+  "authors": {
+    "duanbhu": "310701836@qq.com"
+  },
+  "source": {
+    "git": "https://github.com/duanbhu/PopupView.git",
+    "tag": "0.1.0"
+  },
+  "platforms": {
+    "ios": "13.0"
+  },
+  "source_files": "PopupView/Classes/**/*",
+  "frameworks": "UIKit",
+  "dependencies": {
+    "SwiftMessages": [
+      "~> 10.0.0"
+    ]
+  }
+}
