@@ -7,21 +7,25 @@ let package = Package(
     name: "PopupView",
     platforms: [.iOS("13.0")],
     products: [
-        // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
             name: "PopupView",
             targets: ["PopupView"]),
+        .library(
+            name: "PickerView",
+            targets: ["PickerView"]),
     ],
     dependencies: [
         .package(url: "https://github.com/SwiftKickMobile/SwiftMessages.git", .upToNextMajor(from: "10.0.0"))
     ],
     targets: [
-        // Targets are the basic building blocks of a package, defining a module or a test suite.
-        // Targets can depend on other targets in this package and products from dependencies.
         .target(
-            name: "PopupView", dependencies: [
+            name: "PopupView",
+            dependencies: [
                 .product(name: "SwiftMessages", package: "SwiftMessages")
             ]),
+        .target(
+            name: "PickerView",
+            dependencies: []),
         .testTarget(
             name: "PopupViewTests",
             dependencies: ["PopupView"]
