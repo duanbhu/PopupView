@@ -33,10 +33,22 @@ class ViewController: UIViewController {
             .addAction(.title("确认删除"), .backgroundColor(.blue))
             .alert()
     }
+    
     @IBAction func tap2(_ sender: Any) {
+//        StringPickerView(items: ["5分钟", "10分钟", "15分钟", "20分钟", "25分钟", "30分钟"])
+//            .defaultItem("20分钟")
+//            .title("选择时间")
+//            .completion({ item in
+//                debugPrint("选择： \(item)")
+//            })
+//            .actionSheet()
         
-        StringPickerView(items: ["5分钟", "10分钟", "15分钟", "20分钟", "25分钟", "30分钟"], type: String.self)
+        DatePickerView()
             .title("选择时间")
+            .datePickerMode(.date)
+            .completion({ item in
+                debugPrint("选择： \(item)")
+            })
             .actionSheet()
     }
 }
