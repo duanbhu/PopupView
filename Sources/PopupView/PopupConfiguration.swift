@@ -112,7 +112,7 @@ public extension UIButton {
     
     func update(with config: LabelButtonConfig) {
         self.setTitle(config.title, for: .normal)
-        self.titleLabel?.textColor = config.titleColor
+        self.setTitleColor(config.titleColor, for: .normal)
         self.titleLabel?.font = config.font
         self.setImage(config.icon, for: .normal)
         self.backgroundColor = config.backgroundColor

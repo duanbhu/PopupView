@@ -44,6 +44,7 @@ public class PopupView: BaseView {
         let label = UILabel()
         label.textAlignment = .center
         label.translatesAutoresizingMaskIntoConstraints = false
+        label.numberOfLines = 0
         bodyView.addSubview(label)
         contentStackView.addArrangedSubview(bodyView)
         return label
