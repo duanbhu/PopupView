@@ -16,12 +16,15 @@ open class ListPopupView<CellType: UITableViewCell, T: Any>: PopupView, UITableV
     
     let items: [T]
     
+    let nibName: String?
+    
     var configCellHandle: ((Int, CellType, ItemType) -> ())?
     
     var itemSelectHandle: ((Int, ItemType) -> ())?
     
-    public init(items: [T]) {
+    public init(items: [T], nibName: String? = nil) {
         self.items = items
+        self.nibName = nibName
         super.init(backgroundInsets: .zero, contentViewInsets: .zero)
     }
     
@@ -36,10 +39,13 @@ open class ListPopupView<CellType: UITableViewCell, T: Any>: PopupView, UITableV
         layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.register(CellType.self, forCellReuseIdentifier: "cellId")
         
-        let cellNib = UINib(nibName: "\(CellType.self)", bundle: nil)
-        tableView.register(cellNib, forCellReuseIdentifier: "cellId")        
+        if let nibName = nibName {
+            let cellNib = UINib(nibName: nibName, bundle: nil)
+            tableView.register(cellNib, forCellReuseIdentifier: "cellId")
+        } else {
+            tableView.register(CellType.self, forCellReuseIdentifier: "cellId")
+        }
         contentStackView.addArrangedSubview(tableView)
         tableView.heightAnchor.constraint(greaterThanOrEqualToConstant: 200).isActive = true
         tableView.widthAnchor.constraint(equalTo: contentStackView.widthAnchor).isActive = true
