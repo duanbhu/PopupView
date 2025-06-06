@@ -9,7 +9,7 @@ public extension PopupView {
 extension String: PopupView.MessageType {}
 extension NSAttributedString: PopupView.MessageType {}
 
-public class PopupView: BaseView {
+open class PopupView: BaseView {
     public lazy var cornerRoundingView: CornerRoundingView = {
         let view = CornerRoundingView()
         return view
@@ -61,7 +61,7 @@ public class PopupView: BaseView {
         view.axis = .horizontal
         view.alignment = .fill
         view.distribution = .fillEqually
-        view.spacing = 0
+        view.spacing = PopupConfiguration.default().buttonSpacing
         view.translatesAutoresizingMaskIntoConstraints = false
         contentStackView.addArrangedSubview(view)
         view.widthAnchor.constraint(equalTo: contentStackView.widthAnchor).isActive = true
@@ -96,7 +96,7 @@ public class PopupView: BaseView {
         makeUI()
     }
     
-    func makeUI() {
+    open func makeUI() {
         cornerRoundingView.backgroundColor = .white
         cornerRoundingView.cornerRadius = 12
         cornerRoundingView.layer.masksToBounds = true

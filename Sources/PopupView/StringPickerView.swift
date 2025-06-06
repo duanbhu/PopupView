@@ -38,7 +38,7 @@ public class StringPickerView<Element: PickerOptionalType>: BasePickerView<Eleme
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func makeUI() {
+    public override func makeUI() {
         super.makeUI()
         pickerView.heightAnchor.constraint(equalToConstant: 216).isActive = true
         contentStackView.addArrangedSubview(pickerView)

@@ -30,7 +30,7 @@ public class DatePickerView: BasePickerView<Date> {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func makeUI() {
+    public override func makeUI() {
         super.makeUI()
         datePicker.heightAnchor.constraint(equalToConstant: 216).isActive = true
         contentStackView.addArrangedSubview(datePicker)

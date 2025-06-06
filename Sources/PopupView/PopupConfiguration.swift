@@ -30,6 +30,9 @@ public class PopupConfiguration: NSObject {
     /// 按钮的高度
     public var buttonHeight: CGFloat = 44
     
+    /// 按钮之间的间距
+    public var buttonSpacing: CGFloat = 0
+    
     /// 取消按钮
     public var cancelConfiguration = LabelButtonConfig()
     
@@ -53,15 +56,13 @@ public class LabelButtonConfig: NSObject {
     
     public override init() {}
     
-    /*
-    static public var cancel: ButtonConfig {
-        return ButtonConfig(.title("取消"), .backgroundColor(.color("#F8F8F8")))
+    static public var cancel: LabelButtonConfig {
+        return PopupConfiguration.default().cancelConfiguration
     }
     
-    static public var confirm: ButtonConfig {
-        return ButtonConfig(.title("确认"), .backgroundColor(.color("#5C7DFF")), .titleColor(.white))
+    static public var confirm: LabelButtonConfig {
+        return PopupConfiguration.default().confirmConfiguration
     }
-     */
     
     public enum Part {
         case title(String?)

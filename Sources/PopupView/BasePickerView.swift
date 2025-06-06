@@ -50,7 +50,7 @@ public class BasePickerView<T>: PopupView, @preconcurrency PickerViewType {
         return button
     }()
         
-    override func makeUI() {
+    public override func makeUI() {
         super.makeUI()
         makeTopActions()
         
