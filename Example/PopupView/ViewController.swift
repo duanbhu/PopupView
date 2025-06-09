@@ -11,7 +11,7 @@ import PopupView
 
 class ViewController: UITableViewController {
     
-    let dataList = ["alert message", "string picker", "date picker", "list popup"]
+    let dataList = ["alert message", "string picker", "date picker", "list popup", "filter alert"]
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -36,6 +36,15 @@ class ViewController: UITableViewController {
             .titleColor(.white)
         )
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "UITableViewCell")
+        
+        
+        
+        FiltrateConfiguration.default.isNeedShowCustomDateFooterHandle = { header, item in
+            if header.key == "dateType", item?.title == "自定义" {
+                return true
+            }
+            return false
+        }
     }
 
     override func didReceiveMemoryWarning() {
@@ -49,7 +58,6 @@ class ViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "UITableViewCell")!
-        
         cell.textLabel?.text = dataList[indexPath.row]
         return cell
     }
@@ -93,9 +101,73 @@ class ViewController: UITableViewController {
                     
                 })
                 .actionSheet()
+        case 4:
+            
+            let sectionModels: [FiltrateSectionModel] = [
+                FiltrateSectionModel(
+                    header: .init(title: "选择时间：") .key("dateType"),
+                    items: [
+                        FiltrateItemViewModel(title: "今日"),
+                        FiltrateItemViewModel(title: "昨天"),
+                        FiltrateItemViewModel(title: "一周内"),
+                        FiltrateItemViewModel(title: "一月内"),
+                        FiltrateItemViewModel(title: "本月"),
+                        FiltrateItemViewModel(title: "自定义"),
+                    ]),
+                FiltrateSectionModel(
+                    header: .init(title: "订单类型："),
+                    items: [
+                        FiltrateItemViewModel(title: "全部"),
+                        FiltrateItemViewModel(title: "及时单"),
+                        FiltrateItemViewModel(title: "预约单"),
+                    ]),
+                FiltrateSectionModel(
+                    header: .init(title: "订单状态："),
+                    items: [
+                        FiltrateItemViewModel(title: "全部"),
+                        FiltrateItemViewModel(title: "已完成"),
+                        FiltrateItemViewModel(title: "忽略配送"),
+                        FiltrateItemViewModel(title: "退餐"),
+                        FiltrateItemViewModel(title: "配送超时"),
+                    ]),
+                FiltrateSectionModel(
+                    header: .init(title: "订单来源："),
+                    items: [
+                        FiltrateItemViewModel(title: "全部"),
+                        FiltrateItemViewModel(title: "美团"),
+                        FiltrateItemViewModel(title: "京东秒送"),
+                        FiltrateItemViewModel(title: "抖音外卖")
+                    ]),
+                FiltrateSectionModel(
+                    header: .init(title: "标题五:"),
+                    items: [
+                        FiltrateItemViewModel(title: "全部"),
+                        FiltrateItemViewModel(title: "及时单"),
+                        FiltrateItemViewModel(title: "预约单"),
+                    ])
+            ]
+            
+            let alertController = FiltrateController(sectionModels: sectionModels, completion: nil)
+            alertController.alert(at: self)
+            break
         default: break
             
         }
     }
 }
 
+extension FiltrateItemViewModel {
+    convenience init(title: String) {
+        self.init(title: title, width: 74, increaseWidth: 0, height: 35)
+    }
+}
+
+extension FiltrateHeaderItemViewModel {
+    convenience init(title: String) {
+        self.init()
+        self.height(55)
+            .itemSpacing(8)
+            .lineSpacing(8)
+            .title(title)
+    }
+}
