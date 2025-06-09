@@ -54,6 +54,10 @@ public class LabelButtonConfig: NSObject {
     
     public var titleColor: UIColor = .black
     
+    public var borderColor: UIColor?
+    
+    public var cornerRadius: CGFloat?
+    
     public override init() {}
     
     static public var cancel: LabelButtonConfig {
@@ -108,19 +112,20 @@ public class LabelButtonConfig: NSObject {
 public extension UIButton {
     convenience init(config: LabelButtonConfig) {
         self.init(type: .custom)
-        update(with: config)
+        update(with: config, state: .normal)
     }
     
-    func update(with config: LabelButtonConfig) {
-        self.setTitle(config.title, for: .normal)
-        self.setTitleColor(config.titleColor, for: .normal)
+    func update(with config: LabelButtonConfig, state: UIControl.State) {
+        self.setTitle(config.title, for: state)
+        self.setTitleColor(config.titleColor, for: state)
         self.titleLabel?.font = config.font
-        self.setImage(config.icon, for: .normal)
+        self.setImage(config.icon, for: state)
         self.backgroundColor = config.backgroundColor
         
         if let attributedTitle = config.attributedTitle {
-            self.setAttributedTitle(attributedTitle, for: .normal)
+            self.setAttributedTitle(attributedTitle, for: state)
         }
+        view_update(with: config)
     }
 }
 
@@ -137,6 +142,20 @@ public extension UILabel {
         self.backgroundColor = config.backgroundColor
         if let attributedTitle = config.attributedTitle {
             self.attributedText = attributedTitle
+        }
+        view_update(with: config)
+    }
+}
+
+extension UIView {
+    func view_update(with config: LabelButtonConfig) {
+        if let borderColor = config.borderColor {
+            self.layer.borderColor = borderColor.cgColor
+            self.layer.borderWidth = 1
+        }
+        
+        if let cornerRadius = config.cornerRadius {
+            self.layer.cornerRadius = cornerRadius
         }
     }
 }

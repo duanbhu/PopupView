@@ -12,7 +12,7 @@ open class ListPopupView<CellType: UITableViewCell, T: Any>: PopupView, UITableV
     
     public typealias ItemType = T
     
-    var tableView: UITableView = UITableView()
+    public var tableView: UITableView = UITableView()
     
     let items: [T]
     
@@ -78,6 +78,12 @@ public extension ListPopupView {
     @discardableResult
     func itemSelectHandle(_ handle: ((Int, ItemType) -> ())?) -> Self {
         self.itemSelectHandle = handle
+        return self
+    }
+    
+    @discardableResult
+    func rowHeight(_ rowHeight: CGFloat) -> Self {
+        tableView.rowHeight = rowHeight
         return self
     }
 }

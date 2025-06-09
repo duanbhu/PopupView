@@ -7,7 +7,6 @@
 
 import UIKit
 
-/// 目前仅实现了单列的
 public class DatePickerView: BasePickerView<Date> {
     
     private lazy var datePicker: UIDatePicker = {
