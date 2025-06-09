@@ -40,7 +40,7 @@ class ViewController: UITableViewController {
         
         
         FiltrateConfiguration.default.isNeedShowCustomDateFooterHandle = { header, item in
-            if header.key == "dateType", item?.title == "自定义" {
+            if header.key == "dateType", item?.id == "custom" {
                 return true
             }
             return false
@@ -112,7 +112,7 @@ class ViewController: UITableViewController {
                         FiltrateItemViewModel(title: "一周内"),
                         FiltrateItemViewModel(title: "一月内"),
                         FiltrateItemViewModel(title: "本月"),
-                        FiltrateItemViewModel(title: "自定义"),
+                        FiltrateItemViewModel(title: "自定义").id("custom"),
                     ]),
                 FiltrateSectionModel(
                     header: .init(title: "订单类型："),
@@ -158,7 +158,10 @@ class ViewController: UITableViewController {
 
 extension FiltrateItemViewModel {
     convenience init(title: String) {
-        self.init(title: title, width: 74, increaseWidth: 0, height: 35)
+        self.init()
+        self.config.update(part: .title(title))
+        self.selectConfig.update(part: .title(title))
+        self.width = 73
     }
 }
 
@@ -168,6 +171,6 @@ extension FiltrateHeaderItemViewModel {
         self.height(55)
             .itemSpacing(8)
             .lineSpacing(8)
-            .title(title)
+        self.config.update(part: .title(title))
     }
 }
