@@ -11,7 +11,7 @@ import PopupView
 
 class ViewController: UITableViewController {
     
-    let dataList = ["alert message", "string picker", "date picker", "list popup", "filter alert"]
+    let dataList = ["alert message", "string picker", "date picker", "list popup", "filter alert", "next"]
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -37,14 +37,50 @@ class ViewController: UITableViewController {
         )
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "UITableViewCell")
         
-        
-        
         FiltrateConfiguration.default.isNeedShowCustomDateFooterHandle = { header, item in
             if header.key == "dateType", item?.id == "custom" {
                 return true
             }
             return false
         }
+        
+        
+        FiltrateConfiguration.default
+            .buildSectionModel = { key, isUnfold in
+                guard let key = key as? FilterParameterKey else { return nil }
+                
+                switch key {
+                case .date_type:
+                    return FiltrateSectionModel(
+                        header: .init(title: "选择时间：") .key("dateType"),
+                        items: [
+                            FiltrateItemViewModel(title: "今日"),
+                            FiltrateItemViewModel(title: "昨天"),
+                            FiltrateItemViewModel(title: "一周内"),
+                            FiltrateItemViewModel(title: "一月内"),
+                            FiltrateItemViewModel(title: "本月"),
+                            FiltrateItemViewModel(title: "自定义").id("custom"),
+                        ])
+                case .order_type:
+                    return FiltrateSectionModel(
+                        header: .init(title: "订单类型："),
+                        items: [
+                            FiltrateItemViewModel(title: "全部"),
+                            FiltrateItemViewModel(title: "及时单"),
+                            FiltrateItemViewModel(title: "预约单"),
+                        ])
+                case .order_status:
+                    return FiltrateSectionModel(
+                        header: .init(title: "订单状态："),
+                        items: [
+                            FiltrateItemViewModel(title: "全部"),
+                            FiltrateItemViewModel(title: "已完成"),
+                            FiltrateItemViewModel(title: "忽略配送"),
+                            FiltrateItemViewModel(title: "退餐"),
+                            FiltrateItemViewModel(title: "配送超时"),
+                        ])
+                }
+            }
     }
 
     override func didReceiveMemoryWarning() {
@@ -149,7 +185,9 @@ class ViewController: UITableViewController {
             
             let alertController = FiltrateController(sectionModels: sectionModels, completion: nil)
             alertController.alert(at: self)
-            break
+        case 5:
+            let nextVC = NextViewController()
+            navigationController?.pushViewController(nextVC, animated: true)
         default: break
             
         }

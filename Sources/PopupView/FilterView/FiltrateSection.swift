@@ -30,6 +30,9 @@ public class FiltrateConfiguration: NSObject {
     
     /// 确认按钮
     public var confirmConfiguration = LabelButtonConfig()
+    
+    /// 根据key构建sectionModel
+    public var buildSectionModel: ((FilterParameterKeyable, Bool) -> FiltrateSectionModel?)?
 }
 
 public struct FiltrateSectionModel {
@@ -152,7 +155,6 @@ public class FiltrateItemViewModel: NSObject {
     /// 是否属于选中状态
     public var isSelected: Bool = false
     
-    
     func authWidth() -> CGFloat {
         if width > 0 {
             return width
@@ -160,7 +162,7 @@ public class FiltrateItemViewModel: NSObject {
         // 计算文本宽度
         let title = config.title
         let attrs = [NSAttributedString.Key.font: selectConfig.font]
-        let width = title?.size(withAttributes: attrs as [NSAttributedString.Key: Any]).width ?? 0
+        let width = title?.size(withAttributes:attrs as [NSAttributedString.Key: Any]).width ?? 0
         self.width = width + CGFloat(2) * increaseWidth
         return self.width
     }
