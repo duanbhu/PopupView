@@ -38,17 +38,22 @@ public class FiltrateController: UIViewController {
     
     let completion: FiltrateCompletionBlock?
     
+    /// 已选中的筛选条件
     let filters: [String: Any]
+    
+    /// 初始筛选条件:   重置后，恢复到初始筛选条件
+    let initialFilters: [String: Any]
     
     /// 圆角
     let cornerRadius: CGFloat = 12
     
     // MARK: - NSLayoutConstraint
             
-    public init(sectionModels: [FiltrateSectionModel], filters: [String: Any]? = nil, completion: FiltrateCompletionBlock?) {
+    public init(sectionModels: [FiltrateSectionModel], filters: [String: Any] = [:], initialFilters: [String: Any] = [:], completion: FiltrateCompletionBlock?) {
         self.sectionModels = sectionModels
         self.completion = completion
-        self.filters = filters ?? [:]
+        self.filters = filters
+        self.initialFilters = initialFilters
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -126,17 +131,15 @@ public class FiltrateController: UIViewController {
     
     /// 重置
     @objc func resetAction() {
-//        sectionModels.reset()
+        sectionModels.reset(with: initialFilters)
         collectionView.reloadData()
-        
-        dismiss(animated: false)
     }
     
     /// 确认
     @objc func confirmAction() {
-//        let parameters = sectionModels.toFilterParameters(filters)
+        let parameters = sectionModels.toFilterParameters(filters)
         
-//        completion?(parameters)
+        completion?(parameters)
         dismiss(animated: false)
     }
     

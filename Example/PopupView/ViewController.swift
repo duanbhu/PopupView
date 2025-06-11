@@ -13,6 +13,14 @@ class ViewController: UITableViewController {
     
     let dataList = ["alert message", "string picker", "date picker", "list popup", "filter alert", "next"]
 
+    private lazy var filters: [String: Any] = {
+        var filters: [String: Any] = [:]
+        filters[FilterParameterKey.date_type.key] = DateType.today.id
+        filters[FilterParameterKey.order_type.key] = OrderType.all.id
+        filters[FilterParameterKey.order_source.key] = OrderSource.all.id
+        return filters
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
@@ -113,7 +121,16 @@ class ViewController: UITableViewController {
             let sectionModels = keys.map {
                 FiltrateSectionModel.init(key: $0)
             }
-            let alertController = FiltrateController(sectionModels: sectionModels, completion: nil)
+            
+            sectionModels.reset(with: filters)
+            var filters: [String: Any] = [:]
+            filters[FilterParameterKey.date_type.key] = DateType.today.id
+            filters[FilterParameterKey.order_type.key] = OrderType.all.id
+            filters[FilterParameterKey.order_source.key] = OrderSource.all.id
+            let initialFilters: [String: Any] = filters
+            let alertController = FiltrateController(sectionModels: sectionModels, initialFilters: initialFilters) { filters in
+                self.filters = filters
+            }
             alertController.alert(at: self)
         case 5:
             let nextVC = NextViewController()

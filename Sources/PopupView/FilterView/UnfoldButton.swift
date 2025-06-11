@@ -21,8 +21,11 @@ public class UnfoldButton: UIControl {
         return label
     }()
     
-    public override init(frame: CGRect) {
-        super.init(frame: frame)
+    let showRightLine: Bool
+    
+    public init(showRightLine: Bool = true) {
+        self.showRightLine = showRightLine
+        super.init(frame: .zero)
         makeUI()
     }
     
@@ -42,11 +45,6 @@ public class UnfoldButton: UIControl {
         stackView.isUserInteractionEnabled = true
         addSubview(stackView)
         
-        let line = UIView()
-        line.backgroundColor = UIColor(red: 0.71, green: 0.71, blue: 0.71, alpha: 1)
-        line.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(line)
-        
         iconImageView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             stackView.centerYAnchor.constraint(equalTo: centerYAnchor),
@@ -56,15 +54,24 @@ public class UnfoldButton: UIControl {
             
             iconImageView.widthAnchor.constraint(equalToConstant: 14),
             iconImageView.heightAnchor.constraint(equalToConstant: 14),
-            
+        ])
+        
+        guard showRightLine else {
+            return
+        }
+        
+        let line = UIView()
+        line.backgroundColor = UIColor(red: 0.71, green: 0.71, blue: 0.71, alpha: 1)
+        line.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(line)
+        
+        NSLayoutConstraint.activate([
             line.centerYAnchor.constraint(equalTo: centerYAnchor),
             line.trailingAnchor.constraint(equalTo: trailingAnchor),
             line.widthAnchor.constraint(equalToConstant: 1),
             line.heightAnchor.constraint(equalToConstant: 20)
         ])
     }
-    
-    
     
     override public func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesBegan(touches, with: event)

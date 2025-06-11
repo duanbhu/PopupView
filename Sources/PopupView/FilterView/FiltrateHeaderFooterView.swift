@@ -71,20 +71,23 @@ class FiltrateDateFooterView: FiltrateLineFooterView {
             let lable = UILabel()
             lable.text = title
             
-            let button = UIButton(type: .custom)
+            let button = UnfoldButton(showRightLine: false)
+            button.titleLabel.text = "2025-06-11"
+            button.titleLabel.textColor = .black
+            button.titleLabel.font = .systemFont(ofSize: 14)
             button.addTarget(self, action: #selector(showDatePicker), for: .touchUpInside)
             button.backgroundColor = UIColor(red: 1, green: 0.56, blue: 0.36, alpha: 0.1)
             button.layer.cornerRadius = 4
             button.layer.masksToBounds = true
             button.translatesAutoresizingMaskIntoConstraints = false
             button.widthAnchor.constraint(equalToConstant: 140.0 * frame.width / 324.0).isActive = true
+            button.heightAnchor.constraint(equalToConstant: 32.0 * frame.width / 324.0).isActive = true
             
             let stackView = UIStackView(arrangedSubviews: [lable, button])
             stackView.axis = .horizontal
             stackView.alignment = .center
             stackView.distribution = .fill
             stackView.spacing = 6
-            
             return stackView
         }
         
@@ -95,11 +98,10 @@ class FiltrateDateFooterView: FiltrateLineFooterView {
         stackView.spacing = 12
         stackView.translatesAutoresizingMaskIntoConstraints = false
         self.addSubview(stackView)
-        
         NSLayoutConstraint.activate([
             stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
             stackView.topAnchor.constraint(equalTo: topAnchor, constant: 12),
-            stackView.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor, constant: -12)
+            stackView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -12)
         ])
     }
     
