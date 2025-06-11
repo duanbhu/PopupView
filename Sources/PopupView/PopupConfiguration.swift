@@ -75,6 +75,8 @@ public class LabelButtonConfig: NSObject {
         case font(UIFont)
         case titleColor(UIColor)
         case backgroundColor(UIColor)
+        case borderColor(UIColor?)
+        case cornerRadius(CGFloat?)
     }
     
     public convenience init(_ parts: Part...) {
@@ -105,6 +107,10 @@ public class LabelButtonConfig: NSObject {
             self.titleColor = color
         case .icon(let icon):
             self.icon = icon
+        case let .borderColor(color):
+            self.borderColor = color
+        case let .cornerRadius(radius):
+            self.cornerRadius = radius
         }
     }
 }

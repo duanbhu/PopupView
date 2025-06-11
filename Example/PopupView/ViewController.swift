@@ -38,48 +38,19 @@ class ViewController: UITableViewController {
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "UITableViewCell")
         
         FiltrateConfiguration.default.isNeedShowCustomDateFooterHandle = { header, item in
-            if header.key == "dateType", item?.id == "custom" {
+            guard let key = header.key as? FilterParameterKey else { return false }
+            if key == .date_type, item?.id == "\(DateType.custom.rawValue)" {
                 return true
             }
             return false
         }
         
-        
         FiltrateConfiguration.default
             .buildSectionModel = { key, isUnfold in
-                guard let key = key as? FilterParameterKey else { return nil }
-                
-                switch key {
-                case .date_type:
-                    return FiltrateSectionModel(
-                        header: .init(title: "选择时间：") .key("dateType"),
-                        items: [
-                            FiltrateItemViewModel(title: "今日"),
-                            FiltrateItemViewModel(title: "昨天"),
-                            FiltrateItemViewModel(title: "一周内"),
-                            FiltrateItemViewModel(title: "一月内"),
-                            FiltrateItemViewModel(title: "本月"),
-                            FiltrateItemViewModel(title: "自定义").id("custom"),
-                        ])
-                case .order_type:
-                    return FiltrateSectionModel(
-                        header: .init(title: "订单类型："),
-                        items: [
-                            FiltrateItemViewModel(title: "全部"),
-                            FiltrateItemViewModel(title: "及时单"),
-                            FiltrateItemViewModel(title: "预约单"),
-                        ])
-                case .order_status:
-                    return FiltrateSectionModel(
-                        header: .init(title: "订单状态："),
-                        items: [
-                            FiltrateItemViewModel(title: "全部"),
-                            FiltrateItemViewModel(title: "已完成"),
-                            FiltrateItemViewModel(title: "忽略配送"),
-                            FiltrateItemViewModel(title: "退餐"),
-                            FiltrateItemViewModel(title: "配送超时"),
-                        ])
-                }
+                guard let key = key as? FilterParameterKey else { return [] }
+                return [
+                    .init(key: key, isUnfold: isUnfold, items: key.bindType().items(for: nil))
+                ]
             }
     }
 
@@ -138,51 +109,10 @@ class ViewController: UITableViewController {
                 })
                 .actionSheet()
         case 4:
-            
-            let sectionModels: [FiltrateSectionModel] = [
-                FiltrateSectionModel(
-                    header: .init(title: "选择时间：") .key("dateType"),
-                    items: [
-                        FiltrateItemViewModel(title: "今日"),
-                        FiltrateItemViewModel(title: "昨天"),
-                        FiltrateItemViewModel(title: "一周内"),
-                        FiltrateItemViewModel(title: "一月内"),
-                        FiltrateItemViewModel(title: "本月"),
-                        FiltrateItemViewModel(title: "自定义").id("custom"),
-                    ]),
-                FiltrateSectionModel(
-                    header: .init(title: "订单类型："),
-                    items: [
-                        FiltrateItemViewModel(title: "全部"),
-                        FiltrateItemViewModel(title: "及时单"),
-                        FiltrateItemViewModel(title: "预约单"),
-                    ]),
-                FiltrateSectionModel(
-                    header: .init(title: "订单状态："),
-                    items: [
-                        FiltrateItemViewModel(title: "全部"),
-                        FiltrateItemViewModel(title: "已完成"),
-                        FiltrateItemViewModel(title: "忽略配送"),
-                        FiltrateItemViewModel(title: "退餐"),
-                        FiltrateItemViewModel(title: "配送超时"),
-                    ]),
-                FiltrateSectionModel(
-                    header: .init(title: "订单来源："),
-                    items: [
-                        FiltrateItemViewModel(title: "全部"),
-                        FiltrateItemViewModel(title: "美团"),
-                        FiltrateItemViewModel(title: "京东秒送"),
-                        FiltrateItemViewModel(title: "抖音外卖")
-                    ]),
-                FiltrateSectionModel(
-                    header: .init(title: "标题五:"),
-                    items: [
-                        FiltrateItemViewModel(title: "全部"),
-                        FiltrateItemViewModel(title: "及时单"),
-                        FiltrateItemViewModel(title: "预约单"),
-                    ])
-            ]
-            
+            let keys: [FilterParameterKey] = [.date_type, .order_type, .order_source]
+            let sectionModels = keys.map {
+                FiltrateSectionModel.init(key: $0)
+            }
             let alertController = FiltrateController(sectionModels: sectionModels, completion: nil)
             alertController.alert(at: self)
         case 5:
@@ -195,20 +125,63 @@ class ViewController: UITableViewController {
 }
 
 extension FiltrateItemViewModel {
-    convenience init(title: String) {
-        self.init()
-        self.config.update(part: .title(title))
-        self.selectConfig.update(part: .title(title))
-        self.width = 73
+    convenience init(item: FiltrateItemType, isUnfold: Bool = false) {
+        self.init(item: item)
+        self.selectConfig = .init(
+            .title(item.title),
+            .backgroundColor(.orange),
+            .titleColor(.white)
+        )
+        if isUnfold {
+            self.width = 86
+            self.config = .init(
+                .title(item.title),
+                .backgroundColor(.white),
+                .titleColor(.black),
+                .borderColor(.orange),
+                .cornerRadius(4)
+            )
+        } else {
+            self.width = 73
+            self.config = .init(
+                .title(item.title),
+                .backgroundColor(.init(white: 0.95, alpha: 1)),
+                .titleColor(.black)
+            )
+        }
     }
 }
 
 extension FiltrateHeaderItemViewModel {
-    convenience init(title: String) {
+    convenience init(key: FilterParameterKey, isUnfold: Bool = false, alias: String? = nil) {
         self.init()
-        self.height(55)
-            .itemSpacing(8)
-            .lineSpacing(8)
-        self.config.update(part: .title(title))
+        if isUnfold {
+            self.itemSpacing(16)
+                .lineSpacing(16)
+        } else {
+            self.height(55)
+                .itemSpacing(8)
+                .lineSpacing(8)
+        }
+        self.key(key)
+        self.alias = alias
+        self.config.update(part: .title(key.title))
+    }
+}
+
+extension FiltrateSectionModel {
+    init(key: FilterParameterKey, isUnfold: Bool = false, alias: String? = nil, items: [FiltrateItemType]) {
+        self.init(
+            header: FiltrateHeaderItemViewModel(key: key, isUnfold: isUnfold, alias: alias),
+            items: items.map { FiltrateItemViewModel(item: $0, isUnfold: isUnfold) }
+        )
+    }
+    
+    init(key: FilterParameterKey, isUnfold: Bool = false, alias: String? = nil) {
+        let items = key.bindType().items(for: alias)
+        self.init(
+            header: FiltrateHeaderItemViewModel(key: key, isUnfold: isUnfold, alias: alias),
+            items: items.map { FiltrateItemViewModel(item: $0, isUnfold: isUnfold) }
+        )
     }
 }

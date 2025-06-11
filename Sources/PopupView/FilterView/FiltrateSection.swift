@@ -32,7 +32,7 @@ public class FiltrateConfiguration: NSObject {
     public var confirmConfiguration = LabelButtonConfig()
     
     /// 根据key构建sectionModel
-    public var buildSectionModel: ((FilterParameterKeyable, Bool) -> FiltrateSectionModel?)?
+    public var buildSectionModel: ((FilterParameterKeyable, Bool) -> [FiltrateSectionModel])?
 }
 
 public struct FiltrateSectionModel {
@@ -48,7 +48,10 @@ public struct FiltrateSectionModel {
 
 public class FiltrateHeaderItemViewModel: NSObject {
     /// 这个secton对应的key
-    public var key: String? = nil
+    public var key: FilterParameterKeyable? = nil
+    
+    /// 区别业务中，items会随着业务场景删减
+    public var alias: String? = nil
             
     public var config: LabelButtonConfig = LabelButtonConfig(
         .font(.boldSystemFont(ofSize: 16)),
@@ -83,7 +86,7 @@ public class FiltrateHeaderItemViewModel: NSObject {
 
 public extension FiltrateHeaderItemViewModel {
     @discardableResult
-    func key(_ key: String?) -> Self {
+    func key(_ key: FilterParameterKeyable?) -> Self {
         self.key = key
         return self
     }
@@ -123,6 +126,14 @@ public extension FiltrateHeaderItemViewModel {
         self.itemSpacing = spacing
         return self
     }
+}
+
+public protocol FiltrateItemType {
+    var id: String? { get }
+    
+    var title: String? { get }
+    
+    static func items(for alias: String?) -> [Self]
 }
 
 public class FiltrateItemViewModel: NSObject {
@@ -167,8 +178,10 @@ public class FiltrateItemViewModel: NSObject {
         return self.width
     }
     
-    public override init() {
+    public init(item: FiltrateItemType) {
         super.init()
+        self.id(item.id)
+        self.config.update(part: .title(item.title))
     }
 }
 

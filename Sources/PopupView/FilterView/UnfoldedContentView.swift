@@ -32,7 +32,9 @@ class BackgroundMaskView: UIView {
         ignoreRect = holeRect
         let maskLayer = CAShapeLayer()
         let path = UIBezierPath(rect: self.bounds)
-        path.append(UIBezierPath(rect: holeRect).reversing())
+        
+        let whitePath = UIBezierPath(roundedRect: holeRect, cornerRadius: 8)
+        path.append(whitePath.reversing())
         maskLayer.path = path.cgPath
         self.layer.mask = maskLayer
         return self
@@ -78,8 +80,8 @@ public class UnfoldedContentView: UIView {
     }
     
     func makeUI() {
-        collectionView.backgroundColor = .white
-//        collectionView.frame = CGRect(x: 0, y: 62.wpt, width: kScreenWidth, height: 104.wpt)
+        collectionView.layer.cornerRadius = 8
+        collectionView.layer.masksToBounds = true
         addSubview(collectionView)
         // 点击背景，取消扩展区
         let tap = UITapGestureRecognizer(target: self, action: #selector(hide))
