@@ -68,6 +68,8 @@ open class UnfoldedContentView: UIView {
         }
     }
     
+    public var bottomInset: CGFloat = 0
+    
     var senderHeight: CGFloat = 62
     
     var dismissCompletion: (()->())?
@@ -101,7 +103,7 @@ open class UnfoldedContentView: UIView {
         let senderFrame = superview.convert(sender.frame, to: container)
         var rect = self.frame
         rect.origin = senderFrame.origin
-        rect.size.height = collectionView.frame.height + collectionView.frame.minY
+        rect.size.height = collectionView.frame.height + collectionView.frame.minY + bottomInset
         self.frame = rect
         backgroundMask.ignoreRect(rect)
     }
