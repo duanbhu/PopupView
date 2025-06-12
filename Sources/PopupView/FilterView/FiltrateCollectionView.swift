@@ -107,10 +107,8 @@ extension FiltrateCollectionView: UICollectionViewDelegate {
             item.isSelected = !item.isSelected
             if item.isSelected, item.isRepelWhenMultiSelect {
                 section.items.filter { $0 != item }.forEach { $0.isSelected = false }
-            }
-            
-            if item.isSelected {
-                section.items.filter { $0.isSelected && $0 != item && item.isRepelWhenMultiSelect }
+            } else if item.isSelected, !item.isRepelWhenMultiSelect {
+                section.items.filter { $0.isSelected && $0 != item && $0.isRepelWhenMultiSelect }
                     .forEach { $0.isSelected = false }
             }
         } else {
