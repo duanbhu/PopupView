@@ -42,9 +42,9 @@ open class BackgroundMaskView: UIView {
     
     open override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
         if ignoreRect.contains(point) {
-            return nil
+            return super.hitTest(point, with: event)
         }
-        return super.hitTest(point, with: event)
+        return self
     }
 }
 
