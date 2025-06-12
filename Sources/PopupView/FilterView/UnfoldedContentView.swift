@@ -70,9 +70,9 @@ open class UnfoldedContentView: UIView {
     
     public var bottomInset: CGFloat = 0
     
-    var senderHeight: CGFloat = 62
+    public var senderHeight: CGFloat = 62
     
-    public var dismissCompletion: (()->())?
+    public var didHideHandle: (()->())?
         
     public override init(frame: CGRect) {
         super.init(frame: frame)
@@ -121,17 +121,17 @@ open class UnfoldedContentView: UIView {
     }
     
     @objc
-    public func hide() {
+    open func hide() {
         removeFromSuperview()
         backgroundMask.removeFromSuperview()
-        dismissCompletion?()
+        didHideHandle?()
     }
     
-    public override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
-        let ignoreRect = CGRect(x: 0, y: 0, width: self.frame.width, height: senderHeight)
+    open override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
+        let ignoreRect = self.frame
         if ignoreRect.contains(point) {
-            return nil
+            return super.hitTest(point, with: event)
         }
-        return super.hitTest(point, with: event)
+        return nil
     }
 }
