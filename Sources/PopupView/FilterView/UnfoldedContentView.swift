@@ -28,7 +28,7 @@ open class BackgroundMaskView: UIView {
     
     // 不被遮罩的区域
     @discardableResult
-    func ignoreRect(_ holeRect: CGRect) -> Self {
+    open func ignoreRect(_ holeRect: CGRect) -> Self {
         ignoreRect = holeRect
         let maskLayer = CAShapeLayer()
         let path = UIBezierPath(rect: self.bounds)
