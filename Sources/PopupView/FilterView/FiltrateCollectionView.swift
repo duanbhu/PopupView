@@ -21,7 +21,7 @@ open class FiltrateCollectionView: UICollectionView {
         }
     }
         
-    var didSelectItemBlock: (() -> ())?
+    open var didSelectItemBlock: (() -> ())?
     
     var collectionViewHeightConstraint: NSLayoutConstraint!
     

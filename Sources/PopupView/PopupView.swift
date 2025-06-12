@@ -9,7 +9,7 @@ public extension PopupView {
 extension String: PopupView.MessageType {}
 extension NSAttributedString: PopupView.MessageType {}
 
-open class PopupView: BaseView {
+open class PopupView: BaseView, ButtonStackable {
     public lazy var cornerRoundingView: CornerRoundingView = {
         let view = CornerRoundingView()
         return view
@@ -57,12 +57,7 @@ open class PopupView: BaseView {
     
     var buttonH: NSLayoutConstraint!
     public lazy var buttonStackView: UIStackView = {
-        let view = UIStackView(arrangedSubviews: [])
-        view.axis = .horizontal
-        view.alignment = .fill
-        view.distribution = .fillEqually
-        view.spacing = PopupConfiguration.default().buttonSpacing
-        view.translatesAutoresizingMaskIntoConstraints = false
+        let view = createButtonStackView()
         contentStackView.addArrangedSubview(view)
         view.widthAnchor.constraint(equalTo: contentStackView.widthAnchor).isActive = true
         buttonH = view.heightAnchor.constraint(equalToConstant: PopupConfiguration.default().buttonHeight)
@@ -122,7 +117,6 @@ open class PopupView: BaseView {
     }
     
     public func actionSheet() {
-        
         cornerRoundingView.roundedCorners = [.topLeft, .topRight]
         
         var config = SwiftMessages.defaultConfig
@@ -172,58 +166,5 @@ public extension PopupView {
             messageLabel.bottomAnchor.constraint(equalTo: bodyView.bottomAnchor, constant: -insets.bottom),
         ])
         return self
-    }
-}
-
-// MARK: - title
-public extension PopupView {
-    typealias Handle = (PopupView) -> ()
-    
-    @discardableResult
-    func addAction(_ parts: LabelButtonConfig.Part... , handel: Handle? = nil) -> Self {
-        let config = LabelButtonConfig(parts)
-        return addAction(config: config, handel: handel)
-    }
-    
-    @discardableResult
-    func addAction(_ title: String? = nil, config: LabelButtonConfig, handel: Handle? = nil) -> Self {
-        let button = UIButton(config: config)
-        if let title = title {
-            button.setTitle(title, for: .normal)
-        }
-        return addButton(button, handel: handel)
-    }
-    
-    @discardableResult
-    func addButton(_ button: UIButton, handel: Handle? = nil) -> Self {
-        buttonStackView.addArrangedSubview(button)
-        button.addActionBlock { sender in
-            if handel == nil {
-                SwiftMessages.hide()
-            }
-            handel?(self)
-        }
-        return self
-    }
-}
-
-@MainActor fileprivate var UIButtonActionKeyContext: UInt8 = 0
-extension UIButton {
-   
-    func addActionBlock(_ closure: @escaping (_ sender: UIButton) -> Void,
-                            for controlEvents: UIControl.Event = .touchUpInside) {
-        //把闭包作为一个值 先保存起来
-        objc_setAssociatedObject(self, &UIButtonActionKeyContext, closure, objc_AssociationPolicy.OBJC_ASSOCIATION_COPY)
-        //给按钮添加传统的点击事件，调用写好的方法
-        self.addTarget(self, action: #selector(my_ActionForTapGesture), for: controlEvents)
-    }
-    
-    @objc private func my_ActionForTapGesture() {
-        //获取闭包值
-        let obj = objc_getAssociatedObject(self, &UIButtonActionKeyContext)
-        if let action = obj as? (_ sender:UIButton)->() {
-            //调用闭包
-            action(self)
-        }
     }
 }

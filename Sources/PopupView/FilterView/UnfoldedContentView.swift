@@ -72,7 +72,7 @@ open class UnfoldedContentView: UIView {
     
     var senderHeight: CGFloat = 62
     
-    var dismissCompletion: (()->())?
+    public var dismissCompletion: (()->())?
         
     public override init(frame: CGRect) {
         super.init(frame: frame)
