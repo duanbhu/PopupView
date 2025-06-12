@@ -25,7 +25,7 @@ open class FiltrateCollectionView: UICollectionView {
     
     var collectionViewHeightConstraint: NSLayoutConstraint!
     
-    init(frame: CGRect) {
+    public init(frame: CGRect) {
         let flowLayout = AlignedCollectionViewFlowLayout()
         flowLayout.horizontalAlignment = .leading
         flowLayout.sectionInset = UIEdgeInsets(top: 0, left: 15, bottom: 0, right: 15)
@@ -49,7 +49,7 @@ open class FiltrateCollectionView: UICollectionView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func updateHeight() {
+    open func updateHeight() {
         let height = self.collectionViewLayout.collectionViewContentSize.height
         guard height != self.frame.height else { return }
         var rect = self.frame

@@ -7,8 +7,6 @@
 
 import UIKit
 
-import UIKit
-
 open class BackgroundMaskView: UIView {
     /// 不被遮罩的区域, 挖洞
     var ignoreRect = CGRect.zero
