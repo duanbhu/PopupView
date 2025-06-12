@@ -81,7 +81,7 @@ open class UnfoldedContentView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func makeUI() {
+    open func makeUI() {
         collectionView.layer.cornerRadius = 8
         collectionView.layer.masksToBounds = true
         addSubview(collectionView)
@@ -91,7 +91,7 @@ open class UnfoldedContentView: UIView {
         backgroundMask.addGestureRecognizer(tap)
     }
     
-    public func config(sectionModels: [FiltrateSectionModel], sender: UIView, at container: UIView) {
+    open func config(sectionModels: [FiltrateSectionModel], sender: UIView, at container: UIView) {
         senderHeight = sender.frame.height
         collectionView.frame = CGRect(x: 0, y: sender.frame.height, width: frame.width, height: 104)
         
@@ -106,7 +106,7 @@ open class UnfoldedContentView: UIView {
         backgroundMask.ignoreRect(rect)
     }
     
-    public func show(sectionModels: [FiltrateSectionModel], sender: UIView, at container: UIView) {
+    open func show(sectionModels: [FiltrateSectionModel], sender: UIView, at container: UIView) {
         config(sectionModels: sectionModels, sender: sender, at: container)
         
         if !container.subviews.contains(backgroundMask) {
