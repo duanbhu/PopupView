@@ -10,9 +10,11 @@ import UIKit
 open class BackgroundMaskView: UIView {
     /// 不被遮罩的区域, 挖洞
     var ignoreRect = CGRect.zero
-    
+        
     public override init(frame: CGRect) {
         super.init(frame: frame)
+        // true：当用户点击背景时，起到拦截事件的作用； false时， 事件会传递给下一个视图，这里不允许设置为false
+        isUserInteractionEnabled = true
         makeUI()
     }
     
@@ -39,17 +41,21 @@ open class BackgroundMaskView: UIView {
     }
     
     open override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
-        if ignoreRect.contains(point) {
-            return super.hitTest(point, with: event)
+        if !self.isUserInteractionEnabled || self.alpha <= 0.01 || self.isHidden {
+            return nil
         }
-        return self
+        
+        if ignoreRect.contains(point) {
+            return nil
+        }
+        return super.hitTest(point, with: event)
     }
 }
 
 open class UnfoldedContentView: UIView {
 
     /// 半透明遮罩
-    public lazy var backgroundMask: BackgroundMaskView = {
+    lazy var backgroundMask: BackgroundMaskView = {
         let view = BackgroundMaskView(frame: UIScreen.main.bounds)
         return view
     }()
@@ -70,6 +76,8 @@ open class UnfoldedContentView: UIView {
     
     public var senderHeight: CGFloat = 62
     
+    public var isHideWhenTapMask = true
+    
     public var didHideHandle: (()->())?
         
     public override init(frame: CGRect) {
@@ -86,7 +94,7 @@ open class UnfoldedContentView: UIView {
         collectionView.layer.masksToBounds = true
         addSubview(collectionView)
         // 点击背景，取消扩展区
-        let tap = UITapGestureRecognizer(target: self, action: #selector(hide))
+        let tap = UITapGestureRecognizer(target: self, action: #selector(tapMask))
         backgroundMask.isUserInteractionEnabled = true
         backgroundMask.addGestureRecognizer(tap)
     }
@@ -118,7 +126,11 @@ open class UnfoldedContentView: UIView {
         }
     }
     
-    @objc
+    @objc func tapMask() {
+        guard isHideWhenTapMask else { return }
+        hide()
+    }
+    
     open func hide() {
         removeFromSuperview()
         backgroundMask.removeFromSuperview()
@@ -126,10 +138,11 @@ open class UnfoldedContentView: UIView {
     }
     
     open override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
-        let ignoreRect = self.frame
-        if ignoreRect.contains(point) {
-            return super.hitTest(point, with: event)
+        let senderRect = CGRect(x: 0, y: 0, width: frame.width, height: senderHeight)
+        if senderRect.contains(point) {
+            // 下一层的视图继续响应
+            return nil
         }
-        return nil
+        return super.hitTest(point, with: event)
     }
 }
