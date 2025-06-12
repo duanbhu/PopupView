@@ -78,6 +78,9 @@ public class FiltrateHeaderItemViewModel: NSObject {
     /// 结束时间
     public var endTime: Date?
     
+    /// 是否允许多选  默认不允许
+    public var allowMultiSelect: Bool = false
+    
     public override init() {
         self.startTime = Date()
         self.endTime = Date()
@@ -126,6 +129,12 @@ public extension FiltrateHeaderItemViewModel {
         self.itemSpacing = spacing
         return self
     }
+    
+    @discardableResult
+    func allowMultiSelect(_ bool: Bool) -> Self {
+        self.allowMultiSelect = bool
+        return self
+    }
 }
 
 public protocol FiltrateItemType {
@@ -165,6 +174,9 @@ public class FiltrateItemViewModel: NSObject {
     
     /// 是否属于选中状态
     public var isSelected: Bool = false
+    
+    /// 多选时，是否排斥其他选项,   true：即选择该项后， 同section下， 已勾选的则取消勾选。 默认false
+    public var isRepelWhenMultiSelect: Bool = false
     
     func authWidth() -> CGFloat {
         if width > 0 {

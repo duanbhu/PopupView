@@ -101,8 +101,18 @@ extension FiltrateCollectionView: UICollectionViewDataSource {
 extension FiltrateCollectionView: UICollectionViewDelegate {
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let section = sections[indexPath.section]
-        for (idx, item) in section.items.enumerated() {
-            item.isSelected = idx == indexPath.item
+        if section.header.allowMultiSelect {
+            // 允许多选
+            let item = section.items[indexPath.item]
+            item.isSelected = !item.isSelected
+            if item.isSelected, item.isRepelWhenMultiSelect {
+                section.items.filter { $0 != item }.forEach { $0.isSelected = false }
+            }
+        } else {
+            // 单选
+            for (idx, item) in section.items.enumerated() {
+                item.isSelected = idx == indexPath.item
+            }
         }
         collectionView.reloadData()
         didSelectItemBlock?()
