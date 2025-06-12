@@ -14,7 +14,7 @@ private extension String {
     static let lineFooterId = "FiltrateLineFooterView"
 }
 
-class FiltrateCollectionView: UICollectionView {
+open class FiltrateCollectionView: UICollectionView {
     var sections: [FiltrateSectionModel] = [] {
         didSet {
             self.reloadData()
@@ -45,7 +45,7 @@ class FiltrateCollectionView: UICollectionView {
         heightAnchor.constraint(lessThanOrEqualToConstant: UIScreen.main.bounds.height * 0.7).isActive = true
     }
     
-    required init?(coder: NSCoder) {
+    required public init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
@@ -60,22 +60,22 @@ class FiltrateCollectionView: UICollectionView {
 }
 
 extension FiltrateCollectionView: UICollectionViewDataSource {
-    func numberOfSections(in collectionView: UICollectionView) -> Int {
+    public func numberOfSections(in collectionView: UICollectionView) -> Int {
         return sections.count
     }
     
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return sections[section].items.count
     }
     
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: .cellId, for: indexPath) as! FiltrateCell
         let item = sections[indexPath.section].items[indexPath.item]
         cell.bind(to: item)
         return cell
     }
     
-    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+    public func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         let model = sections[indexPath.section].header
         switch kind {
         case UICollectionView.elementKindSectionHeader:
@@ -99,7 +99,7 @@ extension FiltrateCollectionView: UICollectionViewDataSource {
 }
 
 extension FiltrateCollectionView: UICollectionViewDelegate {
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+    public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let section = sections[indexPath.section]
         for (idx, item) in section.items.enumerated() {
             item.isSelected = idx == indexPath.item
@@ -111,31 +111,31 @@ extension FiltrateCollectionView: UICollectionViewDelegate {
 }
 
 extension FiltrateCollectionView: UICollectionViewDelegateFlowLayout {
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let item = sections[indexPath.section].items[indexPath.item]
         return CGSize(width: item.authWidth(), height: item.height)
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         return CGSize(width: self.frame.width, height: sections[section].header.height)
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
+    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
         guard isNeedShowCustomDateFooter(for: section) else {
             return CGSize(width: self.frame.width, height: 14)
         }
         return CGSize(width: self.frame.width, height: 100)
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         return sections[section].header.sectionInset
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return sections[section].header.lineSpacing
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
         return sections[section].header.itemSpacing
     }
 }

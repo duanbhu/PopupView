@@ -9,16 +9,16 @@ import UIKit
 
 import UIKit
 
-class BackgroundMaskView: UIView {
+open class BackgroundMaskView: UIView {
     /// 不被遮罩的区域, 挖洞
     var ignoreRect = CGRect.zero
     
-    override init(frame: CGRect) {
+    public override init(frame: CGRect) {
         super.init(frame: frame)
         makeUI()
     }
     
-    required init?(coder: NSCoder) {
+    required public init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
@@ -40,7 +40,7 @@ class BackgroundMaskView: UIView {
         return self
     }
     
-    override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
+    open override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
         if ignoreRect.contains(point) {
             return nil
         }
@@ -48,25 +48,27 @@ class BackgroundMaskView: UIView {
     }
 }
 
-public class UnfoldedContentView: UIView {
+open class UnfoldedContentView: UIView {
 
     /// 半透明遮罩
-    private lazy var backgroundMask: BackgroundMaskView = {
+    public lazy var backgroundMask: BackgroundMaskView = {
         let view = BackgroundMaskView(frame: UIScreen.main.bounds)
         return view
     }()
 
-    lazy var collectionView: FiltrateCollectionView = {
+    public lazy var collectionView: FiltrateCollectionView = {
         let view = FiltrateCollectionView(frame: self.bounds)
         return view
     }()
     
-    var sectionModels: [FiltrateSectionModel] = [] {
+    public var sectionModels: [FiltrateSectionModel] = [] {
         didSet {
             collectionView.sections = sectionModels
             collectionView.updateHeight()
         }
     }
+    
+    var senderHeight: CGFloat = 62
     
     var dismissCompletion: (()->())?
         
@@ -75,7 +77,7 @@ public class UnfoldedContentView: UIView {
         makeUI()
     }
     
-    required init?(coder: NSCoder) {
+    required public init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
@@ -89,7 +91,8 @@ public class UnfoldedContentView: UIView {
         backgroundMask.addGestureRecognizer(tap)
     }
     
-    public func show(sectionModels: [FiltrateSectionModel], sender: UIView, at container: UIView) {
+    public func config(sectionModels: [FiltrateSectionModel], sender: UIView, at container: UIView) {
+        senderHeight = sender.frame.height
         collectionView.frame = CGRect(x: 0, y: sender.frame.height, width: frame.width, height: 104)
         
         guard let superview = sender.superview else { return }
@@ -101,6 +104,10 @@ public class UnfoldedContentView: UIView {
         rect.size.height = collectionView.frame.height + collectionView.frame.minY
         self.frame = rect
         backgroundMask.ignoreRect(rect)
+    }
+    
+    public func show(sectionModels: [FiltrateSectionModel], sender: UIView, at container: UIView) {
+        config(sectionModels: sectionModels, sender: sender, at: container)
         
         if !container.subviews.contains(backgroundMask) {
             container.addSubview(backgroundMask)
@@ -119,7 +126,7 @@ public class UnfoldedContentView: UIView {
     }
     
     public override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
-        let ignoreRect = CGRect(x: 0, y: 0, width: self.frame.width, height: 62)
+        let ignoreRect = CGRect(x: 0, y: 0, width: self.frame.width, height: senderHeight)
         if ignoreRect.contains(point) {
             return nil
         }
