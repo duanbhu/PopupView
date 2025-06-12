@@ -15,7 +15,7 @@ private extension String {
 }
 
 open class FiltrateCollectionView: UICollectionView {
-    var sections: [FiltrateSectionModel] = [] {
+    public var sections: [FiltrateSectionModel] = [] {
         didSet {
             self.reloadData()
         }
