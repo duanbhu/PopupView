@@ -41,7 +41,7 @@ public class StringPickerView<Element: PickerOptionalType>: BasePickerView<Eleme
     public override func makeUI() {
         super.makeUI()
         pickerView.heightAnchor.constraint(equalToConstant: 216).isActive = true
-        contentStackView.addArrangedSubview(pickerView)
+        contentStackView.insertArrangedSubview(pickerView, at: 1)
     }
     
     override func resetDef() {
@@ -58,10 +58,10 @@ public class StringPickerView<Element: PickerOptionalType>: BasePickerView<Eleme
 //        }
     }
     
-    override func confirmAction(_ sender: UIButton) {
+    override func confirmAction() {
         // 单列
         completion?(items[pickerView.selectedRow(inComponent: 0)])
-        super.confirmAction(sender)
+        super.confirmAction()
     }
     
     // MARK: - UIPickerViewDelegate, UIPickerViewDataSource

@@ -8,19 +8,21 @@
 
 import UIKit
 
-open class ListPopupView<CellType: UITableViewCell, T: Any>: PopupView, UITableViewDataSource, UITableViewDelegate {
+open class ListPopupView<CellType: UITableViewCell, T: Any>: BasePopupView, ButtonStackable, UITableViewDataSource, UITableViewDelegate {
     
     public typealias ItemType = T
     
     public var tableView: UITableView = UITableView()
     
-    let items: [T]
+    public var items: [T]
     
-    let nibName: String?
+    public let nibName: String?
     
-    var configCellHandle: ((Int, CellType, ItemType) -> ())?
+    public var configCellHandle: ((Int, CellType, ItemType) -> ())?
     
-    var itemSelectHandle: ((Int, ItemType) -> ())?
+    public var itemSelectHandle: ((Int, ItemType) -> ())?
+    
+    private var tableViewMinHeight: NSLayoutConstraint?
     
     public init(items: [T], nibName: String? = nil) {
         self.items = items
@@ -47,8 +49,13 @@ open class ListPopupView<CellType: UITableViewCell, T: Any>: PopupView, UITableV
             tableView.register(CellType.self, forCellReuseIdentifier: "cellId")
         }
         contentStackView.addArrangedSubview(tableView)
-        tableView.heightAnchor.constraint(greaterThanOrEqualToConstant: 200).isActive = true
-        tableView.widthAnchor.constraint(equalTo: contentStackView.widthAnchor).isActive = true
+        
+        tableViewMinHeight = tableView.heightAnchor.constraint(greaterThanOrEqualToConstant: 200)
+        NSLayoutConstraint.activate([
+            tableView.widthAnchor.constraint(equalTo: contentStackView.widthAnchor),
+            tableView.heightAnchor.constraint(lessThanOrEqualToConstant: UIScreen.main.bounds.height * 0.7),
+            tableViewMinHeight!
+        ])
     }
     
     // MARK: - UITableViewDataSource
@@ -84,6 +91,13 @@ public extension ListPopupView {
     @discardableResult
     func rowHeight(_ rowHeight: CGFloat) -> Self {
         tableView.rowHeight = rowHeight
+        return self
+    }
+    
+    /// list 最低高度， 默认200
+    @discardableResult
+    func minimumHeight(_ minimumHeight: CGFloat) -> Self {
+        tableViewMinHeight?.constant = minimumHeight
         return self
     }
 }

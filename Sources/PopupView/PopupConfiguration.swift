@@ -68,6 +68,18 @@ public class LabelButtonConfig: NSObject {
         return PopupConfiguration.default().confirmConfiguration
     }
     
+    public static func cancel(radius: CGFloat? = nil) -> LabelButtonConfig {
+        var config = PopupConfiguration.default().cancelConfiguration
+        config.update(part: .cornerRadius(radius))
+        return config
+    }
+    
+    public static func confirm(radius: CGFloat? = nil) -> LabelButtonConfig {
+        var config = PopupConfiguration.default().confirmConfiguration
+        config.update(part: .cornerRadius(radius))
+        return config
+    }
+    
     public enum Part {
         case title(String?)
         case attributedTitle(NSAttributedString?)

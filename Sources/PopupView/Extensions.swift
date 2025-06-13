@@ -18,11 +18,10 @@ public extension String {
 
 nonisolated(unsafe) fileprivate var UIButtonActionKeyContext: UInt8 = 0
 public extension UIButton {
+    /// 给按钮添加闭包事件
     func addActionBlock(_ closure: @escaping (_ sender: UIButton) -> Void,
                             for controlEvents: UIControl.Event = .touchUpInside) {
-        //把闭包作为一个值 先保存起来
         objc_setAssociatedObject(self, &UIButtonActionKeyContext, closure, objc_AssociationPolicy.OBJC_ASSOCIATION_COPY)
-        //给按钮添加传统的点击事件，调用写好的方法
         self.addTarget(self, action: #selector(my_ActionForTapGesture), for: controlEvents)
     }
     

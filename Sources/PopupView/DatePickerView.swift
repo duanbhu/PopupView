@@ -32,16 +32,16 @@ public class DatePickerView: BasePickerView<Date> {
     public override func makeUI() {
         super.makeUI()
         datePicker.heightAnchor.constraint(equalToConstant: 216).isActive = true
-        contentStackView.addArrangedSubview(datePicker)
+        contentStackView.insertArrangedSubview(datePicker, at: 1)
     }
     
     override func resetDef() {
         datePicker.date = self.default ?? Date()
     }
     
-    override func confirmAction(_ sender: UIButton) {
+    override func confirmAction() {
         
-        super.confirmAction(sender)
+        super.confirmAction()
     }
 }
 

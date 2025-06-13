@@ -106,14 +106,14 @@ class ViewController: UITableViewController {
                 .actionSheet()
         case 3:
             let items = (0...10).map { "item_\($0) " }
-            ListPopupView<ListTableViewCell, String>(items: items)
+            ListPopupView<ListTableViewCell, String>(items: items, nibName: "ListTableViewCell")
                 .title("选择列表")
                 .configCellHandle({ row, cell, item in
                     cell.titleLabel.text = item
                 })
                 .addAction("我知道了", config: .cancel)
                 .addAction(config: .confirm, handel: { popupView in
-                    
+                    popupView.hide()
                 })
                 .actionSheet()
         case 4:

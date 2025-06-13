@@ -2,57 +2,14 @@
 import SwiftMessages
 import UIKit
 
-public extension PopupView {
-    protocol MessageType {}
-}
-
-extension String: PopupView.MessageType {}
-extension NSAttributedString: PopupView.MessageType {}
-
-open class PopupView: BaseView, ButtonStackable {
-    public lazy var cornerRoundingView: CornerRoundingView = {
-        let view = CornerRoundingView()
-        return view
-    }()
-    
-    public lazy var contentStackView: UIStackView = {
-        let view = UIStackView(arrangedSubviews: [])
-        view.axis = .vertical
-        view.alignment = .center
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-    
-    var titleH: NSLayoutConstraint!
-    /// title
-    public lazy var titleLabel: UILabel = {
-        let label = UILabel(config: PopupConfiguration.default().titleConfiguration)
-        label.textAlignment = .center
-        label.translatesAutoresizingMaskIntoConstraints = false
-
-        contentStackView.insertArrangedSubview(label, at: 0)
-        titleH = label.heightAnchor.constraint(equalToConstant: 55)
-        NSLayoutConstraint.activate([
-            titleH,
-            label.widthAnchor.constraint(equalTo: contentStackView.widthAnchor)
-        ])
-        return label
-    }()
-    
+open class PopupView: BasePopupView, ButtonStackable {
     /// message
     public lazy var messageLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .center
         label.translatesAutoresizingMaskIntoConstraints = false
         label.numberOfLines = 0
-        bodyView.addSubview(label)
-        contentStackView.addArrangedSubview(bodyView)
         return label
-    }()
-    
-    public lazy var bodyView: UIView = {
-        let view = UIView()
-        return view
     }()
     
     var buttonH: NSLayoutConstraint!
@@ -65,106 +22,26 @@ open class PopupView: BaseView, ButtonStackable {
         return view
     }()
     
-    public lazy var safeView: UIView = {
-        let view = UIView()
-        return view
-    }()
-    
-    let backgroundInsets: UIEdgeInsets
-    
-    let contentViewInsets: UIEdgeInsets
-    
-    public init(
-        backgroundInsets: UIEdgeInsets = PopupConfiguration.default().backgroundInsets,
-        contentViewInsets: UIEdgeInsets = PopupConfiguration.default().contentViewInsets
-    ) {
-        self.backgroundInsets = backgroundInsets
-        self.contentViewInsets = contentViewInsets
-        super.init(frame: .zero)
-        makeUI()
-    }
-    
-    public required init?(coder aDecoder: NSCoder) {
-        self.backgroundInsets = .zero
-        self.contentViewInsets = .zero
-        super.init(coder: aDecoder)
-        makeUI()
-    }
-    
-    open func makeUI() {
-        cornerRoundingView.backgroundColor = .white
-        cornerRoundingView.cornerRadius = 12
-        cornerRoundingView.layer.masksToBounds = true
-        installBackgroundView(cornerRoundingView, insets: backgroundInsets)
-        installContentView(contentStackView, insets: contentViewInsets)
-    }
-    
-    func show() {
-        var config = SwiftMessages.defaultConfig
-        config.duration = .forever
-        config.presentationStyle = .bottom
-        config.dimMode = .gray(interactive: true)
-        SwiftMessages.show(config: config, view: self)
-    }
-    
-    public func alert() {
-        var config = SwiftMessages.defaultConfig
-        config.duration = .forever
-        config.presentationContext = .window(windowLevel: .alert)
-        config.presentationStyle = .center
-        config.dimMode = .gray(interactive: true)
-        SwiftMessages.show(config: config, view: self)
-    }
-    
-    public func actionSheet() {
-        cornerRoundingView.roundedCorners = [.topLeft, .topRight]
-        
-        var config = SwiftMessages.defaultConfig
-        config.duration = .forever
-        config.presentationContext = .window(windowLevel: .alert)
-        config.presentationStyle = .bottom
-        config.dimMode = .gray(interactive: true)
-        SwiftMessages.show(config: config, view: self)
-    }
-}
-
-// MARK: - title
-public extension PopupView {
-    @discardableResult
-    func title(_ text: MessageType) -> Self {
-        if let string = text as? String {
-            titleLabel.text = string
-        } else if let attributedText = text as? NSAttributedString {
-            titleLabel.attributedText = attributedText
-        } else {
-            
-        }
-        return self
-    }
-    
-    @discardableResult
-    func titleHeight(_ h: CGFloat) -> Self {
-        titleH.constant = h
-        return self
+    open override func makeUI() {
+        super.makeUI()
     }
 }
 
 // MARK: - message
 public extension PopupView {
+    func messageLines(_ lines: Int) -> Self {
+        messageLabel.numberOfLines = lines
+        return self
+    }
+    
     @discardableResult
-    func message(_ text: MessageType, insets: UIEdgeInsets = PopupConfiguration.default().bodyInsets) -> Self {
+    func message(_ text: PopupStringType, insets: UIEdgeInsets = PopupConfiguration.default().bodyInsets) -> Self {
         if let string = text as? String {
             messageLabel.text = string
         } else if let attributedText = text as? NSAttributedString {
             messageLabel.attributedText = attributedText
         }
-        bodyView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            messageLabel.topAnchor.constraint(equalTo: bodyView.topAnchor, constant: insets.top),
-            messageLabel.leadingAnchor.constraint(equalTo: bodyView.leadingAnchor, constant: insets.left),
-            messageLabel.trailingAnchor.constraint(equalTo: bodyView.trailingAnchor, constant: -insets.right),
-            messageLabel.bottomAnchor.constraint(equalTo: bodyView.bottomAnchor, constant: -insets.bottom),
-        ])
+        installBodyContentView(messageLabel, insets: insets)
         return self
     }
 }
