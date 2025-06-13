@@ -11,17 +11,7 @@ open class PopupView: BasePopupView, ButtonStackable {
         label.numberOfLines = 0
         return label
     }()
-    
-    var buttonH: NSLayoutConstraint!
-    public lazy var buttonStackView: UIStackView = {
-        let view = createButtonStackView()
-        contentStackView.addArrangedSubview(view)
-        view.widthAnchor.constraint(equalTo: contentStackView.widthAnchor).isActive = true
-        buttonH = view.heightAnchor.constraint(equalToConstant: PopupConfiguration.default().buttonHeight)
-        buttonH.isActive = true
-        return view
-    }()
-    
+
     open override func makeUI() {
         super.makeUI()
     }

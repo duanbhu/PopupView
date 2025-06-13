@@ -8,7 +8,7 @@
 
 import UIKit
 
-open class ListPopupView<CellType: UITableViewCell, T: Any>: BasePopupView, ButtonStackable, UITableViewDataSource, UITableViewDelegate {
+open class ListPopupView<CellType: UITableViewCell, T: Any>: BasePopupView, ButtonStackable, UITableViewDataSource, UITableViewDelegate, UITableViewDragDelegate {
     
     public typealias ItemType = T
     
@@ -73,6 +73,22 @@ open class ListPopupView<CellType: UITableViewCell, T: Any>: BasePopupView, Butt
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         itemSelectHandle?(indexPath.row, items[indexPath.row])
     }
+    
+    // MARK: - UITableViewDragDelegate
+    public func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+    
+    public func tableView(_ tableView: UITableView, itemsForBeginning session: any UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
+        let dragItem = UIDragItem(itemProvider: NSItemProvider())
+        dragItem.localObject = items[indexPath.row]
+        return [dragItem]
+    }
+    
+    public func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+        let mover = items.remove(at: sourceIndexPath.row)
+        items.insert(mover, at: destinationIndexPath.row)
+    }
 }
 
 public extension ListPopupView {
@@ -98,6 +114,13 @@ public extension ListPopupView {
     @discardableResult
     func minimumHeight(_ minimumHeight: CGFloat) -> Self {
         tableViewMinHeight?.constant = minimumHeight
+        return self
+    }
+    
+    /// 开启拖拽功能
+    func dragInteractionEnabled(_ enabled: Bool) -> Self {
+        tableView.dragInteractionEnabled = enabled
+        tableView.dragDelegate = self
         return self
     }
 }

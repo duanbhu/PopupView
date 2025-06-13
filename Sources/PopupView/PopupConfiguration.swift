@@ -61,21 +61,21 @@ public class LabelButtonConfig: NSObject {
     public override init() {}
     
     static public var cancel: LabelButtonConfig {
-        return PopupConfiguration.default().cancelConfiguration
+        return cancel()
     }
     
     static public var confirm: LabelButtonConfig {
-        return PopupConfiguration.default().confirmConfiguration
+        return confirm()
     }
     
     public static func cancel(radius: CGFloat? = nil) -> LabelButtonConfig {
-        var config = PopupConfiguration.default().cancelConfiguration
+        let config = PopupConfiguration.default().cancelConfiguration
         config.update(part: .cornerRadius(radius))
         return config
     }
     
     public static func confirm(radius: CGFloat? = nil) -> LabelButtonConfig {
-        var config = PopupConfiguration.default().confirmConfiguration
+        let config = PopupConfiguration.default().confirmConfiguration
         config.update(part: .cornerRadius(radius))
         return config
     }

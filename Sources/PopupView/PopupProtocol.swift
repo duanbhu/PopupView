@@ -121,6 +121,16 @@ public extension ButtonStackable {
         } else {
             let view = createButtonStackView()
             objc_setAssociatedObject(self, &DHButtonStackContext, view, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            if let poupView = self as? BasePopupView {
+                poupView.contentStackView.addArrangedSubview(buttonStackView)
+                
+                let widthLC = view.widthAnchor.constraint(equalTo: poupView.cornerRoundingView.widthAnchor)
+                let heightLC = view.heightAnchor.constraint(equalToConstant: PopupConfiguration.default().buttonHeight)
+                [widthLC, heightLC].forEach {
+                    $0.isActive = true
+                    $0.priority = .defaultHigh
+                }
+            }
             return view
         }
     }
