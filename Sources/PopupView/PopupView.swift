@@ -48,6 +48,7 @@ public extension PopupView {
         textField.text = text
         textField.placeholder = placeholder
         textField.heightAnchor.constraint(equalToConstant: height).isActive = true
+        installBodyContentView(textField, insets: insets)
         return self
     }
     
