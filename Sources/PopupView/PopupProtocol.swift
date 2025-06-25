@@ -230,6 +230,7 @@ public extension Popupable {
             config.presentationStyle = .bottom
         }
         config.dimMode = .gray(interactive: isDismissTapMask)
+        config.interactiveHide = false
         config.eventListeners.append() { event in
             if case .didHide = event {
                 didHideHandle?()

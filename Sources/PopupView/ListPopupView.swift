@@ -24,10 +24,10 @@ open class ListPopupView<CellType: UITableViewCell, T: Any>: BasePopupView, Butt
     
     private var tableViewMinHeight: NSLayoutConstraint?
     
-    public init(items: [T], nibName: String? = nil) {
+    public init(items: [T], nibName: String? = nil, backgroundInsets: UIEdgeInsets = .zero,  contentViewInsets: UIEdgeInsets = .zero) {
         self.items = items
         self.nibName = nibName
-        super.init(backgroundInsets: .zero, contentViewInsets: .zero)
+        super.init(backgroundInsets: backgroundInsets, contentViewInsets: contentViewInsets)
     }
     
     @MainActor required public init?(coder aDecoder: NSCoder) {
