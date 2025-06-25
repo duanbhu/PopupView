@@ -27,6 +27,12 @@ public class PopupConfiguration: NSObject {
     /// message的配置信息
     public var messageConfiguration = LabelButtonConfig()
     
+    /// textField的配置信息
+    public var TFConfiguration = LabelButtonConfig()
+    
+    /// 输入框高度
+    public var TFHeight: CGFloat = 54
+    
     /// 按钮的高度
     public var buttonHeight: CGFloat = 44
     
@@ -148,6 +154,24 @@ public extension UIButton {
 }
 
 public extension UILabel {
+    convenience init(config: LabelButtonConfig) {
+        self.init()
+        update(with: config)
+    }
+    
+    func update(with config: LabelButtonConfig) {
+        self.text = config.title
+        self.font = config.font
+        self.textColor = config.titleColor
+        self.backgroundColor = config.backgroundColor
+        if let attributedTitle = config.attributedTitle {
+            self.attributedText = attributedTitle
+        }
+        view_update(with: config)
+    }
+}
+
+public extension UITextField {
     convenience init(config: LabelButtonConfig) {
         self.init()
         update(with: config)

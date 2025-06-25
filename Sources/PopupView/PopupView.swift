@@ -5,10 +5,18 @@ import UIKit
 open class PopupView: BasePopupView, ButtonStackable {
     /// message
     public lazy var messageLabel: UILabel = {
-        let label = UILabel()
+        let label = UILabel(config: PopupConfiguration.default().messageConfiguration)
         label.textAlignment = .center
         label.translatesAutoresizingMaskIntoConstraints = false
         label.numberOfLines = 0
+        return label
+    }()
+    
+    /// textField  输入窗
+    public lazy var textField: UITextField = {
+        let label = UITextField(config: PopupConfiguration.default().TFConfiguration)
+        label.textAlignment = .center
+        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
 
@@ -32,6 +40,19 @@ public extension PopupView {
             messageLabel.attributedText = attributedText
         }
         installBodyContentView(messageLabel, insets: insets)
+        return self
+    }
+    
+    @discardableResult
+    func TF(_ text: String? = nil, placeholder: String?, height: CGFloat = PopupConfiguration.default().TFHeight, insets: UIEdgeInsets = PopupConfiguration.default().bodyInsets) -> Self {
+        textField.text = text
+        textField.placeholder = placeholder
+        textField.heightAnchor.constraint(equalToConstant: height).isActive = true
+        return self
+    }
+    
+    func updateTF(_ config: LabelButtonConfig) -> Self {
+        textField.update(with: config)
         return self
     }
 }

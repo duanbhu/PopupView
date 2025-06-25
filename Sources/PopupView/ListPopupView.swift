@@ -118,6 +118,7 @@ public extension ListPopupView {
     }
     
     /// 开启拖拽功能
+    @discardableResult
     func dragInteractionEnabled(_ enabled: Bool) -> Self {
         tableView.dragInteractionEnabled = enabled
         tableView.dragDelegate = self
