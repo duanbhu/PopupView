@@ -37,6 +37,7 @@ open class BasePopupView: BaseView, Popupable {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         contentStackView.addArrangedSubview(view)
+        view.widthAnchor.constraint(equalTo: contentStackView.widthAnchor, multiplier: 1).isActive = true
         return view
     }()
     
