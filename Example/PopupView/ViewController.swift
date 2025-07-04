@@ -90,20 +90,23 @@ class ViewController: UITableViewController {
                 .alert()
         case 1:
             StringPickerView(items: ["5分钟", "10分钟", "15分钟", "20分钟", "25分钟", "30分钟"])
-                .defaultItem("20分钟")
+                .defaultItem("10分钟")
                 .title("选择时间")
                 .completion({ item in
                     debugPrint("选择： \(item)")
                 })
                 .actionSheet()
         case 2:
-            DatePickerView()
-                .title("选择时间")
-                .datePickerMode(.date)
-                .completion({ item in
-                    debugPrint("选择： \(item)")
-                })
-                .actionSheet()
+//            DatePickerView()
+//                .title("选择时间")
+//                .datePickerMode(.date)
+//                .completion({ item in
+//                    debugPrint("选择： \(item)")
+//                })
+//                .actionSheet()
+            PopupView.showYearMonths { date in
+                
+            }
         case 3:
             let items = (0...10).map { "item_\($0) " }
             ListPopupView<ListTableViewCell, String>(items: items, nibName: "ListTableViewCell")

@@ -40,7 +40,7 @@ public class DatePickerView: BasePickerView<Date> {
     }
     
     override func confirmAction() {
-        
+        completion?(datePicker.date)
         super.confirmAction()
     }
 }
@@ -68,5 +68,53 @@ public extension DatePickerView {
     func currentDate(_ date: Date) -> Self {
         datePicker.date = date
         return self
+    }
+}
+
+public extension DatePickerView {
+    static func showYearMonths(title: String = "选择时间", current: Date = Date(), completion: @escaping (Date) -> ()) {
+        if #available(iOS 17.4, *) {
+            DatePickerView()
+                .title(title)
+                .datePickerMode(.yearAndMonth)
+                .currentDate(current)
+                .completion({ item in
+                    debugPrint("选择： \(item)")
+                    completion(item)
+                })
+                .actionSheet()
+        } else {
+            var years: [String] = []
+            for idx in 2020..<2120 {
+                let hour = String(format: "%d年", idx)
+                years.append(hour)
+            }
+            
+            var months: [String] = []
+            for idx in 1..<13 {
+                let hour = String(format: "%d月", idx)
+                months.append(hour)
+            }
+            let timeZone = TimeZone(identifier: "Asia/Shanghai")! // 设置时区为上海时间
+            var calendar = Calendar(identifier: .gregorian)
+            calendar.timeZone = timeZone
+        
+            let year = calendar.component(.year, from: current)
+            let month = calendar.component(.month, from: current)
+            StringPickerView(items: [years, months])
+                .defaultItems(["\(year)年", "\(month)月"])
+                .title(title)
+                .multiComponentCompletion({ selets in
+                    // 1. 定义格式化器（根据中文日期格式）
+                    let formatter = DateFormatter()
+                    formatter.locale = Locale(identifier: "zh_CN") // 确保中文环境
+                    formatter.timeZone = timeZone
+                    formatter.dateFormat = "yyyy年M月"
+                    formatter.calendar = calendar
+                    let date = formatter.date(from: selets.joined()) ?? current
+                    completion(date)
+                })
+                .actionSheet()
+        }
     }
 }
