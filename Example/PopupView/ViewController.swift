@@ -104,7 +104,7 @@ class ViewController: UITableViewController {
 //                    debugPrint("选择： \(item)")
 //                })
 //                .actionSheet()
-            PopupView.showYearMonths { date in
+            DatePickerView.showYearMonths { _ in
                 
             }
         case 3:

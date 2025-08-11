@@ -79,7 +79,6 @@ public extension DatePickerView {
                 .datePickerMode(.yearAndMonth)
                 .currentDate(current)
                 .completion({ item in
-                    debugPrint("选择： \(item)")
                     completion(item)
                 })
                 .actionSheet()
