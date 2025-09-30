@@ -48,7 +48,7 @@ public struct FiltrateSectionModel {
 
 public class FiltrateHeaderItemViewModel: NSObject {
     /// 这个secton对应的key
-    public var key: FilterParameterKeyable? = nil
+    public var key: (any FilterParameterKeyable)? = nil
     
     /// 区别业务中，items会随着业务场景删减
     public var alias: String? = nil

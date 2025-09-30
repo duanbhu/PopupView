@@ -21,7 +21,7 @@ open class FiltrateCollectionView: UICollectionView {
         }
     }
         
-    open var didSelectItemBlock: (() -> ())?
+    open var didSelectItemBlock: ((_ isCustomDateType: Bool) -> ())?
     
     var collectionViewHeightConstraint: NSLayoutConstraint!
     
@@ -118,7 +118,7 @@ extension FiltrateCollectionView: UICollectionViewDelegate {
             }
         }
         collectionView.reloadData()
-        didSelectItemBlock?()
+        didSelectItemBlock?(isNeedShowCustomDateFooter(for: indexPath.section))
         updateHeight()
     }
 }

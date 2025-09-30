@@ -24,6 +24,12 @@ class NextViewController: UIViewController {
         filterView.viewController = self
         filterView.sectionModels = sectionModels
         view.addSubview(filterView)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(unfoldFilterCompletedNoti), name: .unfoldFilterCompleted, object: filterView)
+    }
+    
+    @objc func unfoldFilterCompletedNoti(_ noti: Notification) {
+        debugPrint("选择结果：\(noti.userInfo ?? [:])")
     }
 
     /*

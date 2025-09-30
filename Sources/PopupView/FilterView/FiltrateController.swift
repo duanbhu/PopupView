@@ -50,6 +50,8 @@ public class FiltrateController: UIViewController {
     // MARK: - NSLayoutConstraint
             
     public init(sectionModels: [FiltrateSectionModel], filters: [String: Any] = [:], initialFilters: [String: Any] = [:], completion: FiltrateCompletionBlock?) {
+        // 根据当前筛选条件，设置勾选情况
+        sectionModels.reset(with: filters)
         self.sectionModels = sectionModels
         self.completion = completion
         self.filters = filters
@@ -149,5 +151,9 @@ public class FiltrateController: UIViewController {
         self.definesPresentationContext = true
         self.modalPresentationStyle = .overCurrentContext;
         viewController.present(self, animated: false, completion: nil)
+    }
+    
+    deinit {
+        debugPrint("没有循环引用: \(self)")
     }
 }

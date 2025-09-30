@@ -7,7 +7,7 @@
 
 import UIKit
 
-public protocol FilterParameterKeyable {
+public protocol FilterParameterKeyable: Equatable {
     /// 标题文本
     var title: String { get }
     
@@ -34,10 +34,17 @@ public extension Dictionary<String, Any> {
     }
 }
 
+public extension Notification.Name {
+    nonisolated(unsafe) static var unfoldFilterCompleted = Notification.Name("PopupView_unfold_filter_completed")
+}
+
 public extension Array<FiltrateSectionModel> {
+    /// 根据当前筛选条件，修改数据源
+    /// - Parameter parameters: 已勾选参数
     func reset(with parameters: [String: Any]?) {
         for sectionModel in self {
-            guard let key = sectionModel.header.key, let id = parameters?[key.key] as? String else { continue }
+            guard let key = sectionModel.header.key else { continue }
+            let id = parameters?[key.key] as? String
             for item in sectionModel.items {
                 item.isSelected = id == item.id
             }
@@ -74,6 +81,21 @@ public extension Array<FiltrateSectionModel> {
         }
         return parameters
     }
+    
+    /// 根据勾选情况，修改筛选条件
+    /// - Parameter parameters: 筛选条件
+    func updateParameters(_ parameters: inout [String: Any]){
+        for sectionModel in self {
+            guard let key = sectionModel.header.key else { continue }
+            let item = sectionModel.items.first { $0.isSelected }
+            parameters[key.key] = item?.id
+            parameters[key.valueTitleKey] = item?.config.title
+            
+            // 自定义时间时，需要传递开始时间、结束时间
+            parameters["start_date"] = sectionModel.header.startTime
+            parameters["end_date"] = sectionModel.header.endTime
+        }
+    }
 }
 
 public class UnfoldFilterView<T: FilterParameterKeyable>: UIView {
@@ -98,16 +120,30 @@ public class UnfoldFilterView<T: FilterParameterKeyable>: UIView {
         return stackView
     }()
     
+    /// 向下展开的视图
     private lazy var unfoldedContentView: UnfoldedContentView  = {
         let contentView = UnfoldedContentView(frame: CGRect(x: 0, y: 0, width: frame.width, height: 104))
-        contentView.collectionView.didSelectItemBlock = { [weak contentView] in
-            
-            
-            
-            
-            
-            
+        contentView.collectionView.didSelectItemBlock = { [weak contentView, weak self] isCustomDateType in
             contentView?.hide()
+            guard let self = self else { return }
+            
+            guard isCustomDateType else {
+                // 点击item，更新筛选数据
+                contentView?.collectionView.sections.updateParameters(&self.parameters)
+                NotificationCenter.default.post(name: .unfoldFilterCompleted, object: self, userInfo: self.parameters)
+                return
+            }
+            // 点击到了自定义时间， 弹出大弹窗
+            for section in sectionModels {
+                for item in section.items {
+                    if FiltrateConfiguration.default.isNeedShowCustomDateFooterHandle?(section.header, item) == true {
+                        section.items.forEach { $0.isSelected = false }
+                        item.isSelected = true
+                        break
+                    }
+                }
+            }
+            self.filterAction(self.filterButton)
         }
         return contentView
     }()
@@ -126,6 +162,9 @@ public class UnfoldFilterView<T: FilterParameterKeyable>: UIView {
             updateItems()
         }
     }
+    
+    /// 重置时，设定的初始条件
+    var initialFilters: [String: Any] = [:]
     
     public init(frame: CGRect, filterWidth: CGFloat = 60, fixedSpace: CGFloat = 46) {
         self.filterWidth = filterWidth
@@ -177,18 +216,25 @@ public class UnfoldFilterView<T: FilterParameterKeyable>: UIView {
     /// 筛选点击事件
     @objc func filterAction(_ sender: UIButton) {
         guard let viewController = viewController else { return }
-
-        let alertController = FiltrateController(sectionModels: sectionModels, completion: nil)
+        unfoldedContentView.hide()
+        let alertController = FiltrateController(sectionModels: sectionModels, filters: parameters, initialFilters: initialFilters) { ret in
+            // 点击确认后，更新
+            ret.forEach { (key, value) in
+                self.parameters.updateValue(value, forKey: key)
+            }
+            NotificationCenter.default.post(name: .unfoldFilterCompleted, object: self, userInfo: self.parameters)
+        }
         alertController.alert(at: viewController)
     }
     
     @objc func cherryItemAction(_ sender: UIButton) {
+        guard let viewController = viewController else { return }
         guard let key = ParameterKey(tag: sender.tag),
               let sections = FiltrateConfiguration.default
             .buildSectionModel?(key, true)
         else { return }
         
-        guard let viewController = viewController else { return }
+        sections.reset(with: parameters)
         unfoldedContentView.show(sectionModels: sections, sender: self, at: viewController.view)
     }
     
@@ -199,6 +245,10 @@ public class UnfoldFilterView<T: FilterParameterKeyable>: UIView {
             let title = parameters.valueTitle(for: key)
             button.titleLabel.text = title
         }
+    }
+    
+    deinit {
+        debugPrint("没有循环引用: \(self)")
     }
 }
 
