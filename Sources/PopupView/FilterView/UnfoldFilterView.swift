@@ -157,14 +157,14 @@ public class UnfoldFilterView<T: FilterParameterKeyable>: UIView {
     let fixedSpace: CGFloat
     
     /// 已选择的参数
-    var parameters: [String: Any] = [:] {
+    public var parameters: [String: Any] = [:] {
         didSet {
             updateItems()
         }
     }
     
     /// 重置时，设定的初始条件
-    var initialFilters: [String: Any] = [:]
+    public var initialFilters: [String: Any] = [:]
     
     public init(frame: CGRect, filterWidth: CGFloat = 60, fixedSpace: CGFloat = 46) {
         self.filterWidth = filterWidth

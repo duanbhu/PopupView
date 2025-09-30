@@ -194,6 +194,7 @@ public class FiltrateItemViewModel: NSObject {
         super.init()
         self.id(item.id)
         self.config.update(part: .title(item.title))
+        self.selectConfig.update(part: .title(item.title))
     }
 }
 
