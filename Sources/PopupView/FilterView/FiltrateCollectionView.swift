@@ -84,7 +84,9 @@ extension FiltrateCollectionView: UICollectionViewDataSource {
             return header
         default:
             guard isNeedShowCustomDateFooter(for: indexPath.section) else {
-                return collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: .lineFooterId, for: indexPath)
+                let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: .lineFooterId, for: indexPath)
+                view.isHidden = indexPath.section == (sections.count - 1)
+                return view
             }
          let footer = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: .dateFooterId, for: indexPath) as! FiltrateDateFooterView
             return footer
