@@ -5,14 +5,14 @@ import PackageDescription
 
 let package = Package(
     name: "PopupView",
-    platforms: [.iOS("13.0")],
+    platforms: [.iOS("12.0")],
     products: [
         .library(
             name: "PopupView",
             targets: ["PopupView"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/SwiftKickMobile/SwiftMessages.git", .upToNextMajor(from: "10.0.0"))
+        .package(url: "https://github.com/SwiftKickMobile/SwiftMessages.git", .upToNextMajor(from: "9.0.9"))
     ],
     targets: [
         .target(
