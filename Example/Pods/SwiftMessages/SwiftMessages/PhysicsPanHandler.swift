@@ -8,7 +8,6 @@
 
 import UIKit
 
-@MainActor
 open class PhysicsPanHandler {
 
     public var hideDelay: TimeInterval = 0.2
@@ -18,7 +17,6 @@ open class PhysicsPanHandler {
         var time: CFAbsoluteTime
     }
 
-    @MainActor
     public final class State {
 
         weak var messageView: UIView?
@@ -129,8 +127,7 @@ open class PhysicsPanHandler {
                 let frame = containerView.convert(view.bounds, from: view)
                 if !containerView.bounds.intersects(frame) {
                     self.isOffScreen = true
-                    Task {
-                        try? await Task.sleep(seconds: self.hideDelay)
+                    DispatchQueue.main.asyncAfter(deadline: .now() + self.hideDelay) {
                         animator.delegate?.hide(animator: animator)
                     }
                 }

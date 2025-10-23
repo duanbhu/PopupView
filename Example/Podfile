@@ -1,6 +1,6 @@
 use_frameworks!
 
-platform :ios, '13.0'
+platform :ios, '12.0'
 
 target 'PopupView_Example' do
   pod 'PopupView', :path => '../'

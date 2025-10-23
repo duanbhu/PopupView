@@ -27,18 +27,24 @@ open class WindowViewController: UIViewController
         self.view = view
         window.rootViewController = self
         window.windowLevel = config.windowLevel ?? UIWindow.Level.normal
-        window.overrideUserInterfaceStyle = config.overrideUserInterfaceStyle
+        if #available(iOS 13, *) {
+            window.overrideUserInterfaceStyle = config.overrideUserInterfaceStyle
+        }
     }
 
     func install() {
-        window?.windowScene = config.windowScene
-        #if !SWIFTMESSAGES_APP_EXTENSIONS
-        previousKeyWindow = UIWindow.keyWindow
-        #endif
-        show(
-            becomeKey: config.shouldBecomeKeyWindow,
-            frame: config.windowScene?.coordinateSpace.bounds
-        )
+        if #available(iOS 13, *) {
+            window?.windowScene = config.windowScene
+            #if !SWIFTMESSAGES_APP_EXTENSIONS
+            previousKeyWindow = UIWindow.keyWindow
+            #endif
+            show(
+                becomeKey: config.shouldBecomeKeyWindow,
+                frame: config.windowScene?.coordinateSpace.bounds
+            )
+        } else {
+            show(becomeKey: config.shouldBecomeKeyWindow)
+        }
     }
 
     private func show(becomeKey: Bool, frame: CGRect? = nil) {
@@ -55,7 +61,9 @@ open class WindowViewController: UIViewController
         if window?.isKeyWindow == true {
             previousKeyWindow?.makeKey()
         }
-        window?.windowScene = nil
+        if #available(iOS 13, *) {
+            window?.windowScene = nil
+        }
         window?.isHidden = true
         window = nil
     }

@@ -1,9 +1,9 @@
 PODS:
   - PopupView (0.1.0):
-    - SwiftMessages (~> 10.0.0)
-  - SwiftMessages (10.0.1):
-    - SwiftMessages/App (= 10.0.1)
-  - SwiftMessages/App (10.0.1)
+    - SwiftMessages (~> 9.0.9)
+  - SwiftMessages (9.0.9):
+    - SwiftMessages/App (= 9.0.9)
+  - SwiftMessages/App (9.0.9)
 
 DEPENDENCIES:
   - PopupView (from `../`)
@@ -17,9 +17,9 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  PopupView: a1336e08a71bea1735a8ffb7516b22f08d050688
-  SwiftMessages: 759b4a0bf5c3a116a0d7e8a34b098ba83c458625
+  PopupView: 818396f8187c546fb99b5a4c8877dd7b20b96d4f
+  SwiftMessages: 1a23aef303fa7bb26ad802880746cf8358e378fe
 
-PODFILE CHECKSUM: 5924b66474f3ed5d6c41f74f090de1cbbef40228
+PODFILE CHECKSUM: d828803ff359740ecba89638231cd415a0f1f4fc
 
 COCOAPODS: 1.16.2

@@ -128,15 +128,21 @@ open class KeyboardTrackingView: UIView {
     }
 
     private func animateKeyboardChange(change: Change, height: CGFloat, userInfo: [AnyHashable: Any]) {
-        if let durationNumber = userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? NSNumber {
-            UIView.animate(withDuration: durationNumber.doubleValue, delay: 0, options: .curveEaseInOut, animations: {
-                self.heightConstraint.constant = height
-                self.updateConstraintsIfNeeded()
-                self.superview?.layoutIfNeeded()
-            }) { completed in
+        self.heightConstraint.constant = height
+        if let durationNumber = userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? NSNumber,
+            let curveNumber = userInfo[UIResponder.keyboardAnimationCurveUserInfoKey] as? NSNumber {
+            CATransaction.begin()
+            CATransaction.setCompletionBlock {
                 self.didChange(change: change, userInfo: userInfo)
                 self.delegate?.keyboardTrackingViewDidChange(change: change, userInfo: userInfo)
             }
+            UIView.beginAnimations(nil, context: nil)
+            UIView.setAnimationDuration(durationNumber.doubleValue)
+            UIView.setAnimationCurve(UIView.AnimationCurve(rawValue: curveNumber.intValue)!)
+            UIView.setAnimationBeginsFromCurrentState(true)
+            self.superview?.layoutIfNeeded()
+            UIView.commitAnimations()
+            CATransaction.commit()
         }
     }
 

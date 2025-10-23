@@ -133,9 +133,6 @@ config.dimMode = .gray(interactive: true)
 // Disable the interactive pan-to-hide gesture.
 config.interactiveHide = false
 
-// Specify haptic feedback (see also MessageView/configureTheme)
-config.haptic = .success
-
 // Specify a status bar style to if the message is displayed directly under the status bar.
 config.preferredStatusBarStyle = .lightContent
 
@@ -181,7 +178,8 @@ And check out our blog post [Elegant Custom UIViewController Transitioning](http
 
 Any of the built-in SwiftMessages views can be displayed by calling the SwiftMessages APIs from within observable object, a button action closure, etc. However, SwiftMessages can also display your custom SwiftUI views.
 
-Take the following message view and companion data model:
+The first step is to define a type that conforms to `MessageViewConvertible`. This would typically be a struct containing the message data to display:
+
 
 ````swift
 struct DemoMessage: Identifiable {
@@ -189,6 +187,12 @@ struct DemoMessage: Identifiable {
     let body: String
 
     var id: String { title + body }
+}
+
+extension DemoMessage: MessageViewConvertible {
+    func asMessageView() -> DemoMessageView {
+        DemoMessageView(message: self)
+    }
 }
 
 struct DemoMessageView: View {
@@ -208,7 +212,7 @@ struct DemoMessageView: View {
         // This makes a tab-style view where the bottom corners are rounded and
         // the view's background extends to the top edge.
         .mask(
-            UnevenRoundedRectangle(bottomLeadingRadius: 15, bottomTrailingRadius: 15)
+	        UnevenRoundedRectangle(bottomLeadingRadius: 15, bottomTrailingRadius: 15)
             // This causes the background to extend into the safe area to the screen edge.
             .edgesIgnoringSafeArea(.top)
         )
@@ -216,14 +220,14 @@ struct DemoMessageView: View {
 }
 ````
 
-You can show it from a button action, view model or other similar context like:
+The SwiftUI message view can be displayed just like any other UIKit message by using `MessageHostingView`:
 
 ````swift
 struct DemoView: View {
     var body: some View {
         Button("Show message") {
             let message = DemoMessage(title: "Demo", body: "SwiftUI forever!")
-            let messageView = MessageHostingView(id: message.id, content: DemoMessageView(message: message)
+            let messageView = MessageHostingView(message: message)
             SwiftMessages.show(view: messageView)
         }
     }
@@ -241,40 +245,12 @@ struct DemoView: View {
         Button("Show message") {
             message = DemoMessage(title: "Demo", body: "SwiftUI forever!")
         }
-        .swiftMessage(message: $message) { message in
-            DemoMessageView(message: message)
-        }
-    }
-}
-````
-
-This is very similar to the `.sheet()` modifier. However, it doesn't expose all of the features of SwiftMessages, such as explicitly hiding messages by ID. It is totally reasonable to use a combination of both approaches.
-
-If your message views are purely data-driven and don't require delegates, callbacks, etc., there is a slightly simplified variation on `swiftMessage()` that doesn't require a view builder. Instead, your data model should conform to `MessageViewConvertible`.
-
-````swift
-extension DemoMessage: MessageViewConvertible {
-    func asMessageView() -> DemoMessageView {
-        DemoMessageView(message: self)
-    }
-}
-````
-
-Then you can drop the view builder when calling `swiftMessage()`:
-
-````swift
-struct DemoView: View {
-
-    @State var message: DemoMessage?
-
-    var body: some View {
-        Button("Show message") {
-            message = DemoMessage(title: "Demo", body: "SwiftUI forever!")
-        }
         .swiftMessage(message: $message)
     }
 }
 ````
+
+This technique may be more SwiftUI-like, but it doesn't offer the full capability of SwiftMessages, such as explicitly hiding messages by their ID. It is totally reasonable to use a combination of both approaches.
 
 Try it out in the SwiftUI demo app!
 
@@ -410,7 +386,7 @@ A common mistake is attempting to remove an element by setting the corresponding
 `MessageView` provides numerous methods that follow the `configure*` naming convention:
 
 ````swift
-view.configureTheme(.warning, includeHaptic: true)
+view.configureTheme(.warning)
 view.configureContent(title: "Warning", body: "Consider yourself warned.", iconText: "🤔")
 ````
 
