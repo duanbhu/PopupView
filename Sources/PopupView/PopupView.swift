@@ -56,12 +56,17 @@ public extension PopupView {
     func TF(_ text: String? = nil, placeholder: String?, height: CGFloat = PopupConfiguration.default().TFHeight, insets: UIEdgeInsets = PopupConfiguration.default().bodyInsets) -> Self {
         textField.text = text
         textField.placeholder = placeholder
-        textField.heightAnchor.constraint(equalToConstant: height).isActive = true
         
         let view = UIStackView(arrangedSubviews: [textField, countLabel])
         view.backgroundColor = textField.backgroundColor
         view.layer.cornerRadius = textField.layer.cornerRadius
-        countLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10).isActive = true
+        
+        NSLayoutConstraint.activate([
+            textField.heightAnchor.constraint(equalToConstant: height),
+            textField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
+            countLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10)
+        ])
+        
         installBodyContentView(view, insets: insets)
         return self
     }
