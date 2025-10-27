@@ -21,7 +21,7 @@ open class PopupView: BasePopupView, ButtonStackable {
     }()
     
     /// textField  count
-    private lazy var countLabel: UILabel = {
+    public lazy var countLabel: UILabel = {
         let label = UILabel()
         label.isHidden = true
         return label
