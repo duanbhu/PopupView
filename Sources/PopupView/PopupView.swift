@@ -26,6 +26,10 @@ open class PopupView: BasePopupView, ButtonStackable {
         label.isHidden = true
         label.textAlignment = .right
         label.translatesAutoresizingMaskIntoConstraints = false
+        // 抗拉伸（Content Hugging Priority）
+        label.setContentHuggingPriority(.required, for: .horizontal)
+        // 抗压缩（Content Compression Resistance Priority）
+        label.setContentCompressionResistancePriority(.required, for: .horizontal)
         return label
     }()
 
