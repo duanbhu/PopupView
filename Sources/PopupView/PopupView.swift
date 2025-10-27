@@ -57,6 +57,8 @@ public extension PopupView {
         textField.heightAnchor.constraint(equalToConstant: height).isActive = true
         
         let view = UIStackView(arrangedSubviews: [textField, countLabel])
+        view.backgroundColor = textField.backgroundColor
+        view.layer.cornerRadius = textField.layer.cornerRadius
         countLabel.widthAnchor.constraint(lessThanOrEqualToConstant: 100).isActive = true
         installBodyContentView(view, insets: insets)
         return self
