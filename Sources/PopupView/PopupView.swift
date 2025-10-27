@@ -24,6 +24,8 @@ open class PopupView: BasePopupView, ButtonStackable {
     public lazy var countLabel: UILabel = {
         let label = UILabel()
         label.isHidden = true
+        label.textAlignment = .right
+        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
 
@@ -59,7 +61,7 @@ public extension PopupView {
         let view = UIStackView(arrangedSubviews: [textField, countLabel])
         view.backgroundColor = textField.backgroundColor
         view.layer.cornerRadius = textField.layer.cornerRadius
-        countLabel.widthAnchor.constraint(lessThanOrEqualToConstant: 100).isActive = true
+        countLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10).isActive = true
         installBodyContentView(view, insets: insets)
         return self
     }
