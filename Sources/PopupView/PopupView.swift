@@ -19,6 +19,13 @@ open class PopupView: BasePopupView, ButtonStackable {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
+    
+    /// textField  count
+    private lazy var countLabel: UILabel = {
+        let label = UILabel()
+        label.isHidden = true
+        return label
+    }()
 
     open override func makeUI() {
         super.makeUI()
@@ -48,7 +55,10 @@ public extension PopupView {
         textField.text = text
         textField.placeholder = placeholder
         textField.heightAnchor.constraint(equalToConstant: height).isActive = true
-        installBodyContentView(textField, insets: insets)
+        
+        let view = UIStackView(arrangedSubviews: [textField, countLabel])
+        countLabel.widthAnchor.constraint(lessThanOrEqualToConstant: 100).isActive = true
+        installBodyContentView(view, insets: insets)
         return self
     }
     
