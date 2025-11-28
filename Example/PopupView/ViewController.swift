@@ -134,6 +134,10 @@ class ViewController: UITableViewController {
             let alertController = FiltrateController(sectionModels: sectionModels, initialFilters: initialFilters) { filters in
                 self.filters = filters
             }
+            alertController.positionConstraints.verticalPosition = .bottom
+            alertController.positionConstraints.size = .sizeToWidth
+            alertController.positionConstraints.safeArea = .empty(fillSafeArea: false)
+            
             alertController.alert(at: self)
         case 5:
             let nextVC = NextViewController()

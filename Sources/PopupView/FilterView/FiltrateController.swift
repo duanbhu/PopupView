@@ -33,6 +33,13 @@ public class FiltrateController: UIViewController {
         view.layer.shadowOpacity = 0.5
         return view
     }()
+    
+    private lazy var bottomSafeAreaView: UIView = {
+        let imageView = UIView()
+        imageView.backgroundColor = .white
+        imageView.isHidden = true
+        return imageView
+    }()
 
     let sectionModels: [FiltrateSectionModel]
     
@@ -46,6 +53,8 @@ public class FiltrateController: UIViewController {
     
     /// 圆角
     let cornerRadius: CGFloat = 12
+    
+    public var positionConstraints: PopupView.PositionConstraints = .float
     
     // MARK: - NSLayoutConstraint
             
@@ -73,6 +82,7 @@ public class FiltrateController: UIViewController {
     
     func makeUI() {
         view.addSubview(backgroundView)
+        view.addSubview(bottomSafeAreaView)
         view.addSubview(contentView)
         
         let resetButton = UIButton(type: .custom)
@@ -86,7 +96,7 @@ public class FiltrateController: UIViewController {
         confirmButton.setTitleColor(.white, for: .normal)
         confirmButton.backgroundColor = .orange
         confirmButton.addTarget(self, action: #selector(confirmAction), for: .touchUpInside)
-         
+        
         let stackView = UIStackView(arrangedSubviews:[resetButton, confirmButton])
         stackView.axis = .horizontal
         stackView.distribution = .fillEqually
@@ -97,7 +107,7 @@ public class FiltrateController: UIViewController {
         stackView.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
         stackView.clipsToBounds = true
         
-        [backgroundView, stackView, contentView, collectionView].forEach {
+        [backgroundView, stackView, contentView, collectionView, bottomSafeAreaView].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
         
@@ -123,12 +133,89 @@ public class FiltrateController: UIViewController {
             stackView.topAnchor.constraint(equalTo: collectionView.bottomAnchor)
         ])
         
-        // 居中显示
         NSLayoutConstraint.activate([
-            contentView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            contentView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            contentView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16)
+            bottomSafeAreaView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            bottomSafeAreaView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            bottomSafeAreaView.widthAnchor.constraint(equalTo: view.widthAnchor),
+            bottomSafeAreaView.heightAnchor.constraint(equalToConstant: 34)
         ])
+    }
+    
+    func setupPosition() {
+        let verticalOffset = positionConstraints.verticalOffset
+        switch positionConstraints.verticalPosition {
+        case .top:
+            contentView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: verticalOffset).isActive = true
+        case .center:
+            contentView.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: verticalOffset).isActive = true
+        case .bottom:
+            
+            if positionConstraints.safeArea.isOverridden {
+                contentView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: verticalOffset).isActive = true
+            }
+            
+            switch positionConstraints.safeArea {
+            case .overridden:
+                contentView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: verticalOffset).isActive = true
+                bottomSafeAreaView.isHidden = true
+            case .empty(let fillSafeArea):
+                // 使用 safeAreaLayoutGuide 自动处理安全区域
+                contentView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: verticalOffset).isActive = true
+                bottomSafeAreaView.isHidden = !fillSafeArea
+            }
+        }
+        setupSize()
+    }
+    
+    public override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        // 视图布局完成后，确保约束正确应用
+        if positionConstraints.verticalPosition == .bottom {
+            // 如果需要，这里可以重新调整约束
+        }
+    }
+    
+    private func setupSize() {
+        var constraints: [NSLayoutConstraint] = []
+        
+        // Layout the scroll view horizontally inside the screen
+        switch positionConstraints.size.width {
+        case .offset(value: let offset):
+            constraints += [
+                contentView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: offset),
+                contentView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -offset)
+            ]
+        case .ratio(value: let ratio):
+            constraints += [
+                contentView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: ratio)
+            ]
+        case .constant(value: let constant):
+            constraints += [
+                contentView.widthAnchor.constraint(equalToConstant: constant)
+            ]
+        case .intrinsic:
+            break
+        }
+        
+        // Layout the scroll view vertically inside the screen
+        switch positionConstraints.size.height {
+        case .offset(value: let offset):
+            constraints += [
+                contentView.topAnchor.constraint(equalTo: view.topAnchor, constant: offset),
+                contentView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -offset)
+            ]
+        case .ratio(value: let ratio):
+            constraints += [
+                contentView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: ratio)
+            ]
+        case .constant(value: let constant):
+            constraints += [
+                contentView.heightAnchor.constraint(equalToConstant: constant)
+            ]
+        case .intrinsic:
+            break
+        }
+        NSLayoutConstraint.activate(constraints)
     }
     
     /// 重置
@@ -149,8 +236,9 @@ public class FiltrateController: UIViewController {
         self.modalPresentationStyle = .fullScreen
         self.providesPresentationContextTransitionStyle = true
         self.definesPresentationContext = true
-        self.modalPresentationStyle = .overCurrentContext;
-        viewController.present(self, animated: false, completion: nil)
+        self.modalPresentationStyle = .overCurrentContext
+        setupPosition()
+        viewController.present(self, animated: false)
     }
     
     deinit {
