@@ -191,8 +191,8 @@ public extension ButtonStackable {
     func addButton(_ button: UIButton, handel: Handle? = nil) -> Self {
         buttonStackView.addArrangedSubview(button)
         button.addActionBlock { sender in
-            if handel == nil, let _ = self as? BasePopupView {
-                SwiftMessages.hide()
+            if handel == nil, let popupView = self as? BasePopupView {
+                popupView.hide()
             }
             handel?(self)
         }
