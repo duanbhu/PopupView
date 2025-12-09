@@ -216,7 +216,7 @@ public extension Popupable {
     ///   - level: UIWindow.Level
     ///   - didHideHandle: 弹窗消失时的回调
     @discardableResult
-    func show(_ position: PopupPosition, isDismissTapMask: Bool = false, level: UIWindow.Level = .alert, didHideHandle: DidHideHandle? = nil) -> Self {
+    func show(_ position: PopupPosition, isDismissTapMask: Bool = false, level: UIWindow.Level = .alert, otherSwiftMessages: SwiftMessages? = nil, didHideHandle: DidHideHandle? = nil) -> Self {
         var config = SwiftMessages.defaultConfig
         config.duration = .forever
         config.presentationContext = .window(windowLevel: level)
@@ -235,6 +235,11 @@ public extension Popupable {
             if case .didHide = event {
                 didHideHandle?()
             }
+        }
+        if let view = self as? BasePopupView, let otherSwiftMessages = otherSwiftMessages {
+            view.otherSwiftMessages(otherSwiftMessages)
+            otherSwiftMessages.show(config: config, view: self)
+            return self
         }
         SwiftMessages.show(config: config, view: self)
         return self
