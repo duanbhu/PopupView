@@ -32,7 +32,13 @@ public class FiltrateConfiguration: NSObject {
     public var confirmConfiguration = LabelButtonConfig()
     
     /// 根据key构建sectionModel
-    public var buildSectionModel: ((FilterParameterKeyable, Bool) -> [FiltrateSectionModel])?
+    public var buildSectionModel: ((any FilterParameterKeyable, Bool) -> [FiltrateSectionModel])?
+    
+    /// 自定义时间 最小时间
+    public var customMinimumDate: Date?
+    
+    /// 自定义时间 最大时间
+    public var customMaximumDate: Date?
 }
 
 public struct FiltrateSectionModel {

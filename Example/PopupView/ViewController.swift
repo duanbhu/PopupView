@@ -60,6 +60,12 @@ class ViewController: UITableViewController {
                     .init(key: key, isUnfold: isUnfold, items: key.bindType().items(for: nil))
                 ]
             }
+        
+        FiltrateConfiguration.default
+            .customMinimumDate = Calendar.current.date(byAdding: .year, value: -1, to: Date())
+        
+        FiltrateConfiguration.default
+            .customMaximumDate = Date()
     }
 
     override func didReceiveMemoryWarning() {

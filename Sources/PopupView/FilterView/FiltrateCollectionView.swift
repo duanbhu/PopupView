@@ -88,7 +88,8 @@ extension FiltrateCollectionView: UICollectionViewDataSource {
                 view.isHidden = indexPath.section == (sections.count - 1)
                 return view
             }
-         let footer = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: .dateFooterId, for: indexPath) as! FiltrateDateFooterView
+            let footer = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: .dateFooterId, for: indexPath) as! FiltrateDateFooterView
+            footer.item = model
             return footer
         }
     }

@@ -48,16 +48,15 @@ public extension Array<FiltrateSectionModel> {
             for item in sectionModel.items {
                 item.isSelected = id == item.id
             }
+            
             // 自定义时间时，需要传递开始时间、结束时间
-//            if key == CherryKey.date_type.rawValue {
-//                if let start_time = parameters?["start_time"] as? Int {
-//                    sectionModel.header.startTime = start_time.toDate
-//                }
-//                
-//                if let end_time = parameters?["end_time"] as? Int {
-//                    sectionModel.header.endTime = end_time.toDate
-//                }
-//            }
+            if let start_time = parameters?["start_time"] as? Date {
+                sectionModel.header.startTime = start_time
+            }
+            
+            if let end_time = parameters?["end_time"] as? Date {
+                sectionModel.header.endTime = end_time
+            }
         }
     }
     
@@ -134,15 +133,7 @@ public class UnfoldFilterView<T: FilterParameterKeyable>: UIView {
                 return
             }
             // 点击到了自定义时间， 弹出大弹窗
-            for section in sectionModels {
-                for item in section.items {
-                    if FiltrateConfiguration.default.isNeedShowCustomDateFooterHandle?(section.header, item) == true {
-                        section.items.forEach { $0.isSelected = false }
-                        item.isSelected = true
-                        break
-                    }
-                }
-            }
+            self.updateSectionsForClickedCustomDate()
             self.filterAction(self.filterButton)
         }
         return contentView
@@ -235,6 +226,18 @@ public class UnfoldFilterView<T: FilterParameterKeyable>: UIView {
         else { return }
         
         sections.reset(with: parameters)
+        
+        // 点击到了自定义时间， 弹出大弹窗
+        for section in sections {
+            for item in section.items {
+                if item.isSelected, FiltrateConfiguration.default.isNeedShowCustomDateFooterHandle?(section.header, item) == true {
+                    updateSectionsForClickedCustomDate()
+                    self.filterAction(self.filterButton)
+                    return
+                }
+            }
+        }
+
         unfoldedContentView.show(sectionModels: sections, sender: self, at: viewController.view)
     }
     
@@ -245,6 +248,20 @@ public class UnfoldFilterView<T: FilterParameterKeyable>: UIView {
             let title = parameters.valueTitle(for: key)
             button.titleLabel.text = title
         }
+    }
+    
+    /// 更新大弹窗的数据源 —  弹出前已选中自定义时间
+    func updateSectionsForClickedCustomDate() {
+        for section in sectionModels {
+            for item in section.items {
+                if FiltrateConfiguration.default.isNeedShowCustomDateFooterHandle?(section.header, item) == true {
+                    section.items.forEach { $0.isSelected = false }
+                    item.isSelected = true
+                    break
+                }
+            }
+        }
+        sectionModels.updateParameters(&parameters)
     }
     
     deinit {
