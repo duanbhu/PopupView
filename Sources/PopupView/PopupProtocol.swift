@@ -7,6 +7,14 @@
 import UIKit
 import SwiftMessages
 
+public extension Notification.Name {
+    /// 弹窗将要出现
+    static let popupViewWillAppear = Notification.Name("com.xbd.popup_view_will_aplear")
+    
+    /// 弹窗已经消失
+    static let popupViewDidDisappear = Notification.Name("com.xbd.popup_view_did_disappear")
+}
+
 public protocol PopupStringType { }
 
 extension String: PopupStringType {}
@@ -234,6 +242,8 @@ public extension Popupable {
         config.eventListeners.append() { event in
             if case .didHide = event {
                 didHideHandle?()
+                NotificationCenter.default.post(name: .popupViewDidDisappear, object: nil, userInfo: nil)
+
             }
         }
         if let view = self as? BasePopupView, let otherSwiftMessages = otherSwiftMessages {
@@ -241,6 +251,7 @@ public extension Popupable {
             otherSwiftMessages.show(config: config, view: self)
             return self
         }
+        NotificationCenter.default.post(name: .popupViewWillAppear, object: nil, userInfo: nil)
         SwiftMessages.show(config: config, view: self)
         return self
     }
