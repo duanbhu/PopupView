@@ -7,6 +7,14 @@
 import UIKit
 import SwiftMessages
 
+public extension Notification.Name {
+    /// 弹窗将要出现
+    static let popupViewWillAppear = Notification.Name("com.xbd.popup_view_will_aplear")
+    
+    /// 弹窗已经消失
+    static let popupViewDidDisappear = Notification.Name("com.xbd.popup_view_did_disappear")
+}
+
 public protocol PopupStringType { }
 
 extension String: PopupStringType {}
@@ -191,8 +199,8 @@ public extension ButtonStackable {
     func addButton(_ button: UIButton, handel: Handle? = nil) -> Self {
         buttonStackView.addArrangedSubview(button)
         button.addActionBlock { sender in
-            if handel == nil, let _ = self as? BasePopupView {
-                SwiftMessages.hide()
+            if handel == nil, let popupView = self as? BasePopupView {
+                popupView.hide()
             }
             handel?(self)
         }
@@ -216,7 +224,7 @@ public extension Popupable {
     ///   - level: UIWindow.Level
     ///   - didHideHandle: 弹窗消失时的回调
     @discardableResult
-    func show(_ position: PopupPosition, isDismissTapMask: Bool = false, level: UIWindow.Level = .alert, didHideHandle: DidHideHandle? = nil) -> Self {
+    func show(_ position: PopupPosition, isDismissTapMask: Bool = false, level: UIWindow.Level = .alert, otherSwiftMessages: SwiftMessages? = nil, didHideHandle: DidHideHandle? = nil) -> Self {
         var config = SwiftMessages.defaultConfig
         config.duration = .forever
         config.presentationContext = .window(windowLevel: level)
@@ -234,8 +242,16 @@ public extension Popupable {
         config.eventListeners.append() { event in
             if case .didHide = event {
                 didHideHandle?()
+                NotificationCenter.default.post(name: .popupViewDidDisappear, object: nil, userInfo: nil)
+
             }
         }
+        if let view = self as? BasePopupView, let otherSwiftMessages = otherSwiftMessages {
+            view.otherSwiftMessages(otherSwiftMessages)
+            otherSwiftMessages.show(config: config, view: self)
+            return self
+        }
+        NotificationCenter.default.post(name: .popupViewWillAppear, object: nil, userInfo: nil)
         SwiftMessages.show(config: config, view: self)
         return self
     }
