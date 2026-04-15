@@ -3,6 +3,9 @@ import SwiftMessages
 import UIKit
 
 open class BasePopupView: BaseView, Popupable {
+    
+    public weak var otherSwiftMessages: SwiftMessages?
+    
     public lazy var cornerRoundingView: CornerRoundingView = {
         let view = CornerRoundingView()
         return view
@@ -87,11 +90,21 @@ open class BasePopupView: BaseView, Popupable {
     }
     
     open func hide(animated: Bool = true) {
-        SwiftMessages.hide(animated: animated)
+        if let otherSwiftMessages = otherSwiftMessages {
+            otherSwiftMessages.hide(animated: animated)
+        } else {
+            SwiftMessages.hide(animated: animated)
+        }
     }
 }
 
 public extension BasePopupView {
+    @discardableResult
+    func otherSwiftMessages(_ otherSwiftMessages: SwiftMessages) -> Self {
+        self.otherSwiftMessages = otherSwiftMessages
+        return self
+    }
+    
     /// 设置圆角
     @discardableResult
     func cornerRadius(_ cornerRadius: CGFloat) -> Self {
