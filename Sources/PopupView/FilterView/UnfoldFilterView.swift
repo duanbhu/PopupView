@@ -19,9 +19,15 @@ public protocol FilterParameterKeyable: Equatable {
     
     var tag: Int { get }
     
+    var isDateType: Bool { get }
+    
     init?(tag: Int)
     
     func bindType() -> FiltrateItemType.Type
+}
+
+public extension FilterParameterKeyable {
+    var isDateType: Bool { false }
 }
 
 public extension Dictionary<String, Any> {
@@ -50,11 +56,11 @@ public extension Array<FiltrateSectionModel> {
             }
             
             // 自定义时间时，需要传递开始时间、结束时间
-            if let start_time = parameters?["start_time"] as? Date {
+            if let start_time = parameters?["start_date"] as? Date {
                 sectionModel.header.startTime = start_time
             }
             
-            if let end_time = parameters?["end_time"] as? Date {
+            if let end_time = parameters?["end_date"] as? Date {
                 sectionModel.header.endTime = end_time
             }
         }
