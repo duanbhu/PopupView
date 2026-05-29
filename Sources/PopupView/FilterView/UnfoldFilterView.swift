@@ -45,6 +45,11 @@ public extension Notification.Name {
 }
 
 public extension Array<FiltrateSectionModel> {
+    private func isSelectedCustomDateItem(in sectionModel: FiltrateSectionModel, item: FiltrateItemViewModel?) -> Bool {
+        guard let key = sectionModel.header.key, key.isDateType else { return false }
+        return FiltrateConfiguration.default.isNeedShowCustomDateFooterHandle?(sectionModel.header, item) ?? false
+    }
+    
     /// 根据当前筛选条件，修改数据源
     /// - Parameter parameters: 已勾选参数
     func reset(with parameters: [String: Any]?) {
@@ -55,13 +60,15 @@ public extension Array<FiltrateSectionModel> {
                 item.isSelected = id == item.id
             }
             
-            // 自定义时间时，需要传递开始时间、结束时间
-            if let start_time = parameters?["start_date"] as? Date {
-                sectionModel.header.startTime = start_time
-            }
-            
-            if let end_time = parameters?["end_date"] as? Date {
-                sectionModel.header.endTime = end_time
+            let selectedItem = sectionModel.items.first { $0.isSelected }
+            if isSelectedCustomDateItem(in: sectionModel, item: selectedItem) {
+                if let startTime = parameters?["start_date"] as? Date {
+                    sectionModel.header.startTime = startTime
+                }
+                
+                if let endTime = parameters?["end_date"] as? Date {
+                    sectionModel.header.endTime = endTime
+                }
             }
         }
     }
@@ -80,9 +87,13 @@ public extension Array<FiltrateSectionModel> {
             parameters[key.key] = item?.id
             parameters[key.valueTitleKey] = item?.config.title
             
-            // 自定义时间时，需要传递开始时间、结束时间
-            parameters["start_date"] = sectionModel.header.startTime
-            parameters["end_date"] = sectionModel.header.endTime
+            if isSelectedCustomDateItem(in: sectionModel, item: item) {
+                parameters["start_date"] = sectionModel.header.startTime
+                parameters["end_date"] = sectionModel.header.endTime
+            } else if key.isDateType {
+                parameters.removeValue(forKey: "start_date")
+                parameters.removeValue(forKey: "end_date")
+            }
         }
         return parameters
     }
@@ -96,9 +107,13 @@ public extension Array<FiltrateSectionModel> {
             parameters[key.key] = item?.id
             parameters[key.valueTitleKey] = item?.config.title
             
-            // 自定义时间时，需要传递开始时间、结束时间
-            parameters["start_date"] = sectionModel.header.startTime
-            parameters["end_date"] = sectionModel.header.endTime
+            if isSelectedCustomDateItem(in: sectionModel, item: item) {
+                parameters["start_date"] = sectionModel.header.startTime
+                parameters["end_date"] = sectionModel.header.endTime
+            } else if key.isDateType {
+                parameters.removeValue(forKey: "start_date")
+                parameters.removeValue(forKey: "end_date")
+            }
         }
     }
 }
@@ -294,4 +309,3 @@ public extension UnfoldFilterView {
         return self
     }
 }
-
