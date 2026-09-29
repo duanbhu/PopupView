@@ -26,10 +26,18 @@ public class FiltrateConfiguration: NSObject {
     public var buttonSpacing: CGFloat = 0
     
     /// 重置按钮
-    public var resetConfiguration = LabelButtonConfig()
+    public var resetConfiguration = LabelButtonConfig(
+        .title("重置"),
+        .titleColor(.black),
+        .backgroundColor(.white)
+    )
     
     /// 确认按钮
-    public var confirmConfiguration = LabelButtonConfig()
+    public var confirmConfiguration = LabelButtonConfig(
+        .title("确认"),
+        .titleColor(.white),
+        .backgroundColor(.orange)
+    )
     
     /// 根据key构建sectionModel
     public var buildSectionModel: ((any FilterParameterKeyable, Bool) -> [FiltrateSectionModel])?

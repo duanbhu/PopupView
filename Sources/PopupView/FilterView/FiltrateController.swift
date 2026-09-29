@@ -85,21 +85,18 @@ public class FiltrateController: UIViewController {
         view.addSubview(bottomSafeAreaView)
         view.addSubview(contentView)
         
-        let resetButton = UIButton(type: .custom)
-        resetButton.setTitle("重置", for: .normal)
-        resetButton.setTitleColor(.black, for: .normal)
-        resetButton.backgroundColor = .white
+        let configuration = FiltrateConfiguration.default
+
+        let resetButton = UIButton(config: configuration.resetConfiguration)
         resetButton.addTarget(self, action: #selector(resetAction), for: .touchUpInside)
         
-        let confirmButton = UIButton(type: .custom)
-        confirmButton.setTitle("确认", for: .normal)
-        confirmButton.setTitleColor(.white, for: .normal)
-        confirmButton.backgroundColor = .orange
+        let confirmButton = UIButton(config: configuration.confirmConfiguration)
         confirmButton.addTarget(self, action: #selector(confirmAction), for: .touchUpInside)
         
         let stackView = UIStackView(arrangedSubviews:[resetButton, confirmButton])
         stackView.axis = .horizontal
         stackView.distribution = .fillEqually
+        stackView.spacing = configuration.buttonSpacing
         contentView.addSubview(collectionView)
         contentView.addSubview(stackView)
         
@@ -129,7 +126,7 @@ public class FiltrateController: UIViewController {
             stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             stackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            stackView.heightAnchor.constraint(equalToConstant: 58),
+            stackView.heightAnchor.constraint(equalToConstant: configuration.buttonHeight),
             stackView.topAnchor.constraint(equalTo: collectionView.bottomAnchor)
         ])
         
